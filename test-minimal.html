@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste Minimalista - Drag and Drop</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f5f5f5;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            margin: 10px 0;
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        
+        .item:hover {
+            background: #e9ecef;
+        }
+        
+        .drag-handle {
+            cursor: grab;
+            color: #666;
+            margin-right: 15px;
+            padding: 8px;
+            border-radius: 4px;
+            background: #e9ecef;
+            border: 1px solid #dee2e6;
+            user-select: none;
+        }
+        
+        .drag-handle:hover {
+            background: #007bff;
+            color: white;
+        }
+        
+        .drag-handle:active {
+            cursor: grabbing;
+        }
+        
+        .sortable-ghost {
+            opacity: 0.4;
+            background: #e3f2fd;
+            border: 2px dashed #2196f3;
+        }
+        
+        .sortable-chosen {
+            cursor: grabbing;
+            transform: scale(1.02);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 10px 5px;
+        }
+        
+        .btn:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Teste Minimalista - Drag and Drop</h1>
+        <p>Este é o teste mais simples possível. Se não funcionar aqui, o problema é com o SortableJS.</p>
+        
+        <button class="btn" onclick="initTest()">Inicializar</button>
+        <button class="btn" onclick="debugTest()">Debug</button>
+        
+        <div id="test-list">
+            <div class="item" data-id="1">
+                <div class="drag-handle">⋮⋮</div>
+                <div>Item 1 - One Piece</div>
+            </div>
+            <div class="item" data-id="2">
+                <div class="drag-handle">⋮⋮</div>
+                <div>Item 2 - Naruto</div>
+            </div>
+            <div class="item" data-id="3">
+                <div class="drag-handle">⋮⋮</div>
+                <div>Item 3 - Attack on Titan</div>
+            </div>
+            <div class="item" data-id="4">
+                <div class="drag-handle">⋮⋮</div>
+                <div>Item 4 - Demon Slayer</div>
+            </div>
+        </div>
+        
+        <div id="debug" style="margin-top: 20px; padding: 10px; background: #f8f9fa; border-radius: 4px; font-family: monospace; font-size: 12px;"></div>
+    </div>
+
+    <!-- SortableJS -->
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+    
+    <script>
+        let sortable = null;
+        
+        function log(message) {
+            const debug = document.getElementById('debug');
+            debug.textContent += new Date().toLocaleTimeString() + ': ' + message + '\n';
+            console.log(message);
+        }
+        
+        function initTest() {
+            log('🔄 Inicializando teste...');
+            
+            // Destruir anterior
+            if (sortable) {
+                sortable.destroy();
+                sortable = null;
+            }
+            
+            // Verificar SortableJS
+            if (typeof Sortable === 'undefined') {
+                log('❌ SortableJS não carregado!');
+                return;
+            }
+            
+            log('✅ SortableJS OK');
+            
+            const container = document.getElementById('test-list');
+            const items = container.querySelectorAll('.item');
+            const handles = container.querySelectorAll('.drag-handle');
+            
+            log(`Itens: ${items.length}, Handles: ${handles.length}`);
+            
+            try {
+                sortable = new Sortable(container, {
+                    handle: '.drag-handle',
+                    animation: 150,
+                    ghostClass: 'sortable-ghost',
+                    chosenClass: 'sortable-chosen',
+                    onStart: (evt) => {
+                        log(`✅ Drag iniciado: ${evt.item.dataset.id}`);
+                    },
+                    onEnd: (evt) => {
+                        log(`✅ Drag finalizado: ${evt.item.dataset.id}`);
+                        const order = Array.from(container.children).map(item => item.dataset.id);
+                        log(`Nova ordem: ${order.join(', ')}`);
+                    }
+                });
+                
+                log('✅ Sortable inicializado com sucesso!');
+                log('Tente arrastar os itens pelos handles (⋮⋮)');
+                
+            } catch (error) {
+                log(`❌ Erro: ${error.message}`);
+            }
+        }
+        
+        function debugTest() {
+            log('🔍 Debug:');
+            log(`SortableJS: ${typeof Sortable !== 'undefined' ? 'OK' : 'ERRO'}`);
+            log(`Container: ${document.getElementById('test-list') ? 'OK' : 'ERRO'}`);
+            log(`Itens: ${document.querySelectorAll('.item').length}`);
+            log(`Handles: ${document.querySelectorAll('.drag-handle').length}`);
+            log(`Sortable ativo: ${sortable ? 'SIM' : 'NÃO'}`);
+        }
+        
+        // Auto-inicializar
+        document.addEventListener('DOMContentLoaded', () => {
+            log('DOM carregado');
+            setTimeout(initTest, 500);
+        });
+    </script>
+</body>
+</html>

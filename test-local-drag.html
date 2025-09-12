@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste Local - Drag and Drop</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f5f5f5;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        
+        .test-title {
+            color: #333;
+            margin-bottom: 15px;
+        }
+        
+        .manga-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            margin: 10px 0;
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .manga-item:hover {
+            background: #e9ecef;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .drag-handle {
+            cursor: grab;
+            color: #666;
+            margin-right: 15px;
+            padding: 8px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+            background: #e9ecef;
+            border: 1px solid #dee2e6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 2rem;
+            height: 2rem;
+        }
+        
+        .drag-handle:hover {
+            background-color: #007bff;
+            color: white;
+            border-color: #0056b3;
+            transform: scale(1.1);
+        }
+        
+        .drag-handle:active {
+            cursor: grabbing;
+        }
+        
+        .manga-info {
+            flex: 1;
+        }
+        
+        .manga-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .manga-status {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .sortable-ghost {
+            opacity: 0.4;
+            background-color: #e3f2fd;
+            border: 2px dashed #2196f3;
+            transform: rotate(2deg);
+        }
+        
+        .sortable-chosen {
+            cursor: grabbing;
+            transform: scale(1.02);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            z-index: 1000;
+        }
+        
+        .btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .btn:hover {
+            background: #0056b3;
+        }
+        
+        .btn-success {
+            background: #28a745;
+        }
+        
+        .btn-success:hover {
+            background: #218838;
+        }
+        
+        .btn-danger {
+            background: #dc3545;
+        }
+        
+        .btn-danger:hover {
+            background: #c82333;
+        }
+        
+        .debug-output {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 15px;
+            margin-top: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #28a745;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            z-index: 10000;
+            animation: slideIn 0.3s ease;
+        }
+        
+        .notification.error {
+            background: #dc3545;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Teste Local - Drag and Drop</h1>
+        <p>Este é um teste específico para ambiente local. Use os botões abaixo para diagnosticar problemas.</p>
+        
+        <div class="test-section">
+            <h2 class="test-title">Controles de Teste</h2>
+            <button class="btn" onclick="initDragDrop()">Inicializar Drag & Drop</button>
+            <button class="btn btn-success" onclick="debugInfo()">Debug Completo</button>
+            <button class="btn btn-success" onclick="testSimple()">Teste Simples</button>
+            <button class="btn btn-danger" onclick="clearDebug()">Limpar Debug</button>
+        </div>
+        
+        <div class="test-section">
+            <h2 class="test-title">Lista de Mangás (Teste)</h2>
+            <div id="manga-list" class="manga-list">
+                <div class="manga-item" data-manga-id="1">
+                    <div class="drag-handle" title="Arrastar para reordenar">
+                        <i class="fas fa-grip-vertical"></i>
+                    </div>
+                    <div class="manga-info">
+                        <div class="manga-title">One Piece</div>
+                        <div class="manga-status">Lendo - Capítulo 1050</div>
+                    </div>
+                </div>
+                
+                <div class="manga-item" data-manga-id="2">
+                    <div class="drag-handle" title="Arrastar para reordenar">
+                        <i class="fas fa-grip-vertical"></i>
+                    </div>
+                    <div class="manga-info">
+                        <div class="manga-title">Naruto</div>
+                        <div class="manga-status">Completado - 700 capítulos</div>
+                    </div>
+                </div>
+                
+                <div class="manga-item" data-manga-id="3">
+                    <div class="drag-handle" title="Arrastar para reordenar">
+                        <i class="fas fa-grip-vertical"></i>
+                    </div>
+                    <div class="manga-info">
+                        <div class="manga-title">Attack on Titan</div>
+                        <div class="manga-status">Completado - 139 capítulos</div>
+                    </div>
+                </div>
+                
+                <div class="manga-item" data-manga-id="4">
+                    <div class="drag-handle" title="Arrastar para reordenar">
+                        <i class="fas fa-grip-vertical"></i>
+                    </div>
+                    <div class="manga-info">
+                        <div class="manga-title">Demon Slayer</div>
+                        <div class="manga-status">Completado - 205 capítulos</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="debug-output" class="debug-output" style="display: none;"></div>
+    </div>
+
+    <!-- SortableJS -->
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+    
+    <script>
+        let sortable = null;
+        let debugLog = [];
+        
+        function log(message) {
+            const timestamp = new Date().toLocaleTimeString();
+            debugLog.push(`[${timestamp}] ${message}`);
+            console.log(message);
+        }
+        
+        function initDragDrop() {
+            log('🔄 Inicializando Drag and Drop...');
+            
+            // Destruir instância anterior se existir
+            if (sortable) {
+                sortable.destroy();
+                sortable = null;
+            }
+            
+            // Verificar se Sortable está disponível
+            if (typeof Sortable === 'undefined') {
+                log('❌ SortableJS não está carregado!');
+                showNotification('Erro: SortableJS não carregado!', 'error');
+                return;
+            }
+            
+            log('✅ SortableJS está disponível');
+            
+            const container = document.getElementById('manga-list');
+            if (!container) {
+                log('❌ Container não encontrado');
+                return;
+            }
+            
+            const items = container.querySelectorAll('[data-manga-id]');
+            const handles = container.querySelectorAll('.drag-handle');
+            
+            log(`Itens encontrados: ${items.length}`);
+            log(`Handles encontrados: ${handles.length}`);
+            
+            if (items.length === 0) {
+                log('❌ Nenhum item encontrado para ordenar');
+                return;
+            }
+            
+            try {
+                sortable = new Sortable(container, {
+                    handle: '.drag-handle',
+                    animation: 150,
+                    ghostClass: 'sortable-ghost',
+                    chosenClass: 'sortable-chosen',
+                    forceFallback: false,
+                    fallbackOnBody: true,
+                    swapThreshold: 0.65,
+                    onStart: (evt) => {
+                        log(`✅ Drag iniciado: ${evt.item.dataset.mangaId}`);
+                        showNotification('Iniciando arraste...');
+                    },
+                    onEnd: (evt) => {
+                        log(`✅ Drag finalizado: ${evt.item.dataset.mangaId}`);
+                        updateOrder();
+                        showNotification('Ordem atualizada!');
+                    }
+                });
+                
+                log('✅ Drag and Drop inicializado com sucesso');
+                showNotification('Drag and Drop inicializado!');
+                
+            } catch (error) {
+                log(`❌ Erro ao inicializar: ${error.message}`);
+                showNotification('Erro ao inicializar: ' + error.message, 'error');
+            }
+        }
+        
+        function updateOrder() {
+            const container = document.getElementById('manga-list');
+            const items = container.querySelectorAll('[data-manga-id]');
+            const order = Array.from(items).map(item => item.dataset.mangaId);
+            log(`Nova ordem: ${order.join(', ')}`);
+        }
+        
+        function testSimple() {
+            log('🧪 Criando teste simples...');
+            
+            // Criar container de teste
+            const testContainer = document.createElement('div');
+            testContainer.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: white;
+                padding: 20px;
+                border: 2px solid #007bff;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                z-index: 10000;
+                min-width: 300px;
+            `;
+            
+            testContainer.innerHTML = `
+                <h3>Teste Simples de Drag and Drop</h3>
+                <div id="simple-list">
+                    <div data-id="1" style="padding: 10px; background: #f0f0f0; margin: 5px; cursor: grab; border-radius: 4px;">
+                        <span class="drag-handle" style="margin-right: 10px;">⋮⋮</span> Item 1
+                    </div>
+                    <div data-id="2" style="padding: 10px; background: #f0f0f0; margin: 5px; cursor: grab; border-radius: 4px;">
+                        <span class="drag-handle" style="margin-right: 10px;">⋮⋮</span> Item 2
+                    </div>
+                    <div data-id="3" style="padding: 10px; background: #f0f0f0; margin: 5px; cursor: grab; border-radius: 4px;">
+                        <span class="drag-handle" style="margin-right: 10px;">⋮⋮</span> Item 3
+                    </div>
+                </div>
+                <button onclick="this.parentElement.remove()" style="margin-top: 10px; padding: 5px 10px;">Fechar</button>
+            `;
+            
+            document.body.appendChild(testContainer);
+            
+            try {
+                const simpleSortable = new Sortable(document.getElementById('simple-list'), {
+                    handle: '.drag-handle',
+                    animation: 150,
+                    onStart: (evt) => {
+                        log(`✅ Teste simples - Drag iniciado: ${evt.item.dataset.id}`);
+                    },
+                    onEnd: (evt) => {
+                        log(`✅ Teste simples - Drag finalizado: ${evt.item.dataset.id}`);
+                        const order = Array.from(evt.to.children).map(item => item.dataset.id);
+                        log(`Teste simples - Nova ordem: ${order.join(', ')}`);
+                    }
+                });
+                
+                log('✅ Teste simples criado! Tente arrastar os itens.');
+                
+            } catch (error) {
+                log(`❌ Erro no teste simples: ${error.message}`);
+                testContainer.remove();
+            }
+        }
+        
+        function debugInfo() {
+            const debugOutput = document.getElementById('debug-output');
+            debugOutput.style.display = 'block';
+            
+            let debugText = '🔍 DEBUG COMPLETO\n';
+            debugText += '==================\n\n';
+            
+            // SortableJS
+            debugText += `1. SortableJS disponível: ${typeof Sortable !== 'undefined'}\n`;
+            if (typeof Sortable !== 'undefined') {
+                debugText += `   Versão: ${Sortable.version || 'Desconhecida'}\n`;
+            }
+            
+            // Container
+            const container = document.getElementById('manga-list');
+            debugText += `\n2. Container encontrado: ${container ? 'SIM' : 'NÃO'}\n`;
+            if (container) {
+                debugText += `   Classes: ${container.className}\n`;
+                debugText += `   Children: ${container.children.length}\n`;
+            }
+            
+            // Itens
+            const items = container ? container.querySelectorAll('[data-manga-id]') : [];
+            debugText += `\n3. Itens encontrados: ${items.length}\n`;
+            items.forEach((item, index) => {
+                const dragHandle = item.querySelector('.drag-handle');
+                const handleVisible = dragHandle && window.getComputedStyle(dragHandle).display !== 'none';
+                debugText += `   ${index + 1}. ID: ${item.dataset.mangaId}\n`;
+                debugText += `      Handle: ${dragHandle ? 'SIM' : 'NÃO'}\n`;
+                debugText += `      Visível: ${handleVisible ? 'SIM' : 'NÃO'}\n`;
+            });
+            
+            // Instância Sortable
+            debugText += `\n4. Instância Sortable: ${sortable ? 'ATIVA' : 'INATIVA'}\n`;
+            
+            // CSS
+            const dragHandle = document.querySelector('.drag-handle');
+            if (dragHandle) {
+                const style = window.getComputedStyle(dragHandle);
+                debugText += `\n5. CSS do Handle:\n`;
+                debugText += `   Cursor: ${style.cursor}\n`;
+                debugText += `   Display: ${style.display}\n`;
+                debugText += `   Pointer-events: ${style.pointerEvents}\n`;
+                debugText += `   Position: ${style.position}\n`;
+            }
+            
+            // Logs
+            debugText += `\n6. Logs de Debug:\n`;
+            debugLog.forEach(log => {
+                debugText += `   ${log}\n`;
+            });
+            
+            debugOutput.textContent = debugText;
+        }
+        
+        function clearDebug() {
+            const debugOutput = document.getElementById('debug-output');
+            debugOutput.style.display = 'none';
+            debugOutput.textContent = '';
+            debugLog = [];
+        }
+        
+        function showNotification(message, type = 'success') {
+            const existing = document.querySelector('.notification');
+            if (existing) {
+                existing.remove();
+            }
+            
+            const notification = document.createElement('div');
+            notification.className = `notification ${type === 'error' ? 'error' : ''}`;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.remove();
+                }
+            }, 3000);
+        }
+        
+        // Inicializar automaticamente
+        document.addEventListener('DOMContentLoaded', () => {
+            log('DOM carregado, inicializando...');
+            setTimeout(initDragDrop, 500);
+        });
+    </script>
+</body>
+</html>
