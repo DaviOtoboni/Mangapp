@@ -31,8 +31,19 @@ if (!isset($input['view_type']) || !in_array($input['view_type'], ['list', 'card
 }
 
 try {
-    // Incluir arquivo de configuração do banco
-    require_once 'config/database.php';
+    // Configuração do banco de dados local
+    $host = 'localhost';
+    $dbname = 'mangapp';
+    $username = 'root';
+    $password = '';
+    $charset = 'utf8mb4';
+    
+    $dsn = "mysql:host=$host;dbname=$dbname;charset=$charset";
+    $options = [
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+        PDO::ATTR_EMULATE_PREPARES => false,
+    ];
     
     // Conectar ao banco de dados
     $pdo = new PDO($dsn, $username, $password, $options);

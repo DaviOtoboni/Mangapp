@@ -688,7 +688,44 @@
             const order = Array.from(items).map(item => item.dataset.mangaId);
             
             console.log(`Nova ordem (${viewType}):`, order);
-            showNotification(`Ordem atualizada para ${viewType}: ${order.join(', ')}`);
+            
+            // Salvar no localStorage
+            localStorage.setItem(`mangaOrder_${viewType}`, JSON.stringify(order));
+            
+            // Enviar para o servidor
+            saveOrderToServer(order, viewType);
+        }
+        
+        // Função para enviar ordem para o servidor
+        async function saveOrderToServer(order, viewType) {
+            try {
+                console.log('📤 Enviando ordem para o servidor...');
+                
+                const response = await fetch('update-order.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        order: order,
+                        view_type: viewType
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    console.log('✅ Ordem salva no servidor:', result.message);
+                    showNotification(`Ordem salva! ${result.message}`);
+                } else {
+                    console.error('❌ Erro do servidor:', result.message);
+                    showNotification(`Erro: ${result.message}`, 'error');
+                }
+                
+            } catch (error) {
+                console.error('❌ Erro ao enviar para servidor:', error);
+                showNotification('Erro de conexão. Ordem salva localmente.', 'error');
+            }
         }
         
         function debugInfo() {

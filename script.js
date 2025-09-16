@@ -826,26 +826,203 @@ function initDragDrop() {
         }
     }
     
+    // Aplicar ordem salva após inicializar
+    setTimeout(() => {
+        applySavedOrder();
+    }, 100);
+    
     console.log('✅ Drag and Drop inicializado');
 }
 
 function updateOrder(viewType) {
+    console.log('🔄 updateOrder chamada para:', viewType);
+    
     const container = viewType === 'list' 
         ? document.querySelector('#list-view')
         : document.querySelector('#cards-view');
         
-    if (!container) return;
+    if (!container) {
+        console.error('❌ Container não encontrado para:', viewType);
+        return;
+    }
     
     const items = container.querySelectorAll('[data-manga-id]');
+    console.log('Itens encontrados:', items.length);
+    
+    if (items.length === 0) {
+        console.warn('⚠️ Nenhum item encontrado para salvar ordem');
+        // Não retornar aqui, pode ser que a página ainda esteja carregando
+        return;
+    }
+    
     const order = Array.from(items).map(item => item.dataset.mangaId);
     
     console.log('Nova ordem:', order);
     
-    // Salvar no localStorage
-    localStorage.setItem(`mangaOrder_${viewType}`, JSON.stringify(order));
+    try {
+        // Salvar no localStorage
+        localStorage.setItem(`mangaOrder_${viewType}`, JSON.stringify(order));
+        console.log('✅ Ordem salva no localStorage');
+        
+        // Enviar para o servidor
+        saveOrderToServer(order, viewType);
+        
+    } catch (error) {
+        console.error('❌ Erro ao salvar ordem:', error);
+    }
+}
+
+// Função para enviar ordem para o servidor
+async function saveOrderToServer(order, viewType) {
+    try {
+        console.log('📤 Enviando ordem para o servidor...');
+        
+        const response = await fetch('update-order.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                order: order,
+                view_type: viewType
+            })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            console.log('✅ Ordem salva no servidor:', result.message);
+            
+            // Mostrar notificação de sucesso
+            if (typeof showNotification === 'function') {
+                showNotification(`Ordem salva! ${result.message}`);
+            } else {
+                console.log('ℹ️ Função showNotification não disponível');
+            }
+        } else {
+            console.error('❌ Erro do servidor:', result.message);
+            
+            // Mostrar notificação de erro
+            if (typeof showNotification === 'function') {
+                showNotification(`Erro: ${result.message}`, 'error');
+            }
+        }
+        
+    } catch (error) {
+        console.error('❌ Erro ao enviar para servidor:', error);
+        
+        // Mostrar notificação de erro de rede
+        if (typeof showNotification === 'function') {
+            showNotification('Erro de conexão. Ordem salva localmente.', 'error');
+        }
+    }
+}
+
+// Função para restaurar ordem salva
+function restoreOrder(viewType) {
+    console.log('🔄 restoreOrder chamada para:', viewType);
     
-    // Mostrar notificação
-    showNotification('Ordem atualizada!');
+    const container = viewType === 'list' 
+        ? document.querySelector('#list-view')
+        : document.querySelector('#cards-view');
+        
+    if (!container) {
+        console.error('❌ Container não encontrado para:', viewType);
+        return false;
+    }
+    
+    const savedOrder = localStorage.getItem(`mangaOrder_${viewType}`);
+    if (!savedOrder) {
+        console.log('ℹ️ Nenhuma ordem salva encontrada para:', viewType);
+        return false;
+    }
+    
+    console.log('📦 Ordem salva encontrada:', savedOrder);
+    
+    try {
+        const order = JSON.parse(savedOrder);
+        console.log('Ordem salva encontrada:', order);
+        
+        const items = container.querySelectorAll('[data-manga-id]');
+        if (items.length === 0) return false;
+        
+        // Criar um mapa de IDs para elementos
+        const itemMap = new Map();
+        items.forEach(item => {
+            itemMap.set(item.dataset.mangaId, item);
+        });
+        
+        // Reordenar elementos conforme ordem salva
+        const orderedItems = [];
+        order.forEach(id => {
+            if (itemMap.has(id)) {
+                orderedItems.push(itemMap.get(id));
+            }
+        });
+        
+        // Adicionar itens que não estavam na ordem salva (novos mangás)
+        items.forEach(item => {
+            if (!order.includes(item.dataset.mangaId)) {
+                orderedItems.push(item);
+            }
+        });
+        
+        // Aplicar nova ordem no DOM
+        orderedItems.forEach(item => {
+            container.appendChild(item);
+        });
+        
+        console.log('Ordem restaurada com sucesso!');
+        return true;
+        
+    } catch (error) {
+        console.error('Erro ao restaurar ordem:', error);
+        return false;
+    }
+}
+
+// Função para aplicar ordem em ambas as visualizações
+function applySavedOrder() {
+    console.log('🔄 Aplicando ordem salva...');
+    
+    // Verificar se há mangás na página
+    const listView = document.querySelector('#list-view');
+    const cardsView = document.querySelector('#cards-view');
+    
+    if (listView) {
+        const listItems = listView.querySelectorAll('[data-manga-id]');
+        console.log('Mangás na lista:', listItems.length);
+    }
+    
+    if (cardsView) {
+        const cardItems = cardsView.querySelectorAll('[data-manga-id]');
+        console.log('Mangás nos cards:', cardItems.length);
+    }
+    
+    const listRestored = restoreOrder('list');
+    const cardsRestored = restoreOrder('cards');
+    
+    if (listRestored || cardsRestored) {
+        console.log('✅ Ordem restaurada com sucesso!');
+        showNotification('Ordem dos mangás restaurada!');
+    } else {
+        console.log('ℹ️ Nenhuma ordem salva encontrada');
+    }
+}
+
+// Função para limpar ordem salva (útil para testes)
+function clearSavedOrder() {
+    localStorage.removeItem('mangaOrder_list');
+    localStorage.removeItem('mangaOrder_cards');
+    console.log('🗑️ Ordem salva removida');
+    showNotification('Ordem salva removida!');
+}
+
+// Função para verificar se há ordem salva
+function hasSavedOrder() {
+    const listOrder = localStorage.getItem('mangaOrder_list');
+    const cardsOrder = localStorage.getItem('mangaOrder_cards');
+    return !!(listOrder || cardsOrder);
 }
 
 function showNotification(message) {
@@ -1068,6 +1245,51 @@ window.runSystemValidation = () => systemValidator.runFullValidation();
 window.testDragDrop = function() {
     console.log('🧪 Testando Drag and Drop...');
     initDragDrop();
+};
+
+// Funções de teste para sistema de ordem
+window.testOrderSystem = function() {
+    console.log('🧪 Testando Sistema de Ordem...');
+    console.log('1. Há ordem salva?', hasSavedOrder());
+    console.log('2. Aplicando ordem salva...');
+    applySavedOrder();
+};
+
+window.clearOrder = function() {
+    console.log('🧪 Limpando ordem salva...');
+    clearSavedOrder();
+};
+
+window.debugOrder = function() {
+    console.log('🔍 DEBUG DO SISTEMA DE ORDEM');
+    console.log('============================');
+    
+    const listOrder = localStorage.getItem('mangaOrder_list');
+    const cardsOrder = localStorage.getItem('mangaOrder_cards');
+    
+    console.log('1. Ordem da lista salva:', listOrder ? JSON.parse(listOrder) : 'Nenhuma');
+    console.log('2. Ordem dos cards salva:', cardsOrder ? JSON.parse(cardsOrder) : 'Nenhuma');
+    console.log('3. Há ordem salva?', hasSavedOrder());
+    
+    const listView = document.querySelector('#list-view');
+    const cardsView = document.querySelector('#cards-view');
+    
+    if (listView) {
+        const listItems = listView.querySelectorAll('[data-manga-id]');
+        const currentListOrder = Array.from(listItems).map(item => item.dataset.mangaId);
+        console.log('4. Ordem atual da lista:', currentListOrder);
+    }
+    
+    if (cardsView) {
+        const cardItems = cardsView.querySelectorAll('[data-manga-id]');
+        const currentCardsOrder = Array.from(cardItems).map(item => item.dataset.mangaId);
+        console.log('5. Ordem atual dos cards:', currentCardsOrder);
+    }
+    
+    console.log('\nComandos disponíveis:');
+    console.log('- testOrderSystem() - Testar sistema');
+    console.log('- clearOrder() - Limpar ordem salva');
+    console.log('- applySavedOrder() - Aplicar ordem salva');
 };
 
 window.testSimpleDrag = function() {

@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste de Salvamento de Ordem - MangApp</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .btn {
+            background: #007cba;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .btn:hover {
+            background: #005a87;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Teste de Salvamento de Ordem - MangApp</h1>
+        <p>Este teste verifica se a funcionalidade de salvar a ordem dos mangás está funcionando corretamente.</p>
+        
+        <div class="test-section">
+            <h3>1. Teste de Dados de Exemplo</h3>
+            <p>Teste com dados simulados para verificar se o servidor está funcionando:</p>
+            <button class="btn" onclick="testServerConnection()">Testar Conexão com Servidor</button>
+            <div id="server-result" class="result" style="display: none;"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>2. Teste de Ordem Simulada</h3>
+            <p>Teste com uma ordem simulada de mangás:</p>
+            <button class="btn" onclick="testOrderSave()">Testar Salvamento de Ordem</button>
+            <div id="order-result" class="result" style="display: none;"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>3. Teste de Validação</h3>
+            <p>Teste com dados inválidos para verificar validação:</p>
+            <button class="btn" onclick="testValidation()">Testar Validação</button>
+            <div id="validation-result" class="result" style="display: none;"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>4. Log de Testes</h3>
+            <div id="test-log" class="result info" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script>
+        let testLog = [];
+        
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            testLog.push(`[${timestamp}] ${message}`);
+            updateTestLog();
+            console.log(`[${type.toUpperCase()}] ${message}`);
+        }
+        
+        function updateTestLog() {
+            const logElement = document.getElementById('test-log');
+            logElement.style.display = 'block';
+            logElement.innerHTML = testLog.join('<br>');
+        }
+        
+        function showResult(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            element.style.display = 'block';
+            element.className = `result ${type}`;
+            element.textContent = message;
+        }
+        
+        async function testServerConnection() {
+            log('Iniciando teste de conexão com servidor...');
+            
+            try {
+                const response = await fetch('update-order.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        order: ['1', '2', '3'],
+                        view_type: 'list'
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    log('✅ Servidor respondeu com sucesso!');
+                    showResult('server-result', `Sucesso: ${result.message}`, 'success');
+                } else {
+                    log(`⚠️ Servidor retornou erro: ${result.message}`);
+                    showResult('server-result', `Erro: ${result.message}`, 'error');
+                }
+                
+            } catch (error) {
+                log(`❌ Erro de conexão: ${error.message}`);
+                showResult('server-result', `Erro de conexão: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testOrderSave() {
+            log('Iniciando teste de salvamento de ordem...');
+            
+            const testOrder = ['5', '1', '3', '2', '4'];
+            const viewType = 'cards';
+            
+            try {
+                const response = await fetch('update-order.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        order: testOrder,
+                        view_type: viewType
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    log(`✅ Ordem salva com sucesso! Ordem: ${testOrder.join(', ')}`);
+                    showResult('order-result', `Sucesso: ${result.message}\nOrdem: ${testOrder.join(', ')}`, 'success');
+                } else {
+                    log(`⚠️ Erro ao salvar ordem: ${result.message}`);
+                    showResult('order-result', `Erro: ${result.message}`, 'error');
+                }
+                
+            } catch (error) {
+                log(`❌ Erro ao salvar ordem: ${error.message}`);
+                showResult('order-result', `Erro: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testValidation() {
+            log('Iniciando teste de validação...');
+            
+            // Teste 1: Dados inválidos
+            try {
+                const response = await fetch('update-order.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        order: 'invalid_data', // Deveria ser array
+                        view_type: 'list'
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (!result.success) {
+                    log('✅ Validação funcionando - rejeitou dados inválidos');
+                    showResult('validation-result', `Validação OK: ${result.message}`, 'success');
+                } else {
+                    log('⚠️ Validação falhou - aceitou dados inválidos');
+                    showResult('validation-result', 'Validação falhou - aceitou dados inválidos', 'error');
+                }
+                
+            } catch (error) {
+                log(`❌ Erro no teste de validação: ${error.message}`);
+                showResult('validation-result', `Erro: ${error.message}`, 'error');
+            }
+        }
+        
+        // Inicializar log
+        log('Página de teste carregada');
+    </script>
+</body>
+</html>
