@@ -32,9 +32,13 @@ if (!class_exists('MangaDataProcessor')) {
 // Sistema local apenas - APIs externas removidas
 // Classes de API removidas para simplificar o sistema
 
-// Marcar como inicializado
-define('LOCAL_SYSTEM_INITIALIZED', true);
-define('MANGAPP_LOCAL_INITIALIZED', true);
+// Marcar como inicializado (apenas se não foi definido antes)
+if (!defined('LOCAL_SYSTEM_INITIALIZED')) {
+    define('LOCAL_SYSTEM_INITIALIZED', true);
+}
+if (!defined('MANGAPP_LOCAL_INITIALIZED')) {
+    define('MANGAPP_LOCAL_INITIALIZED', true);
+}
 
 // Sistema de erros removido - sistema local simplificado
 
