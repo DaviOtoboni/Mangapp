@@ -158,15 +158,16 @@
                         </div>
                     <?php endif; ?>
 
+                    <!-- List Header - Sempre visível quando há mangás -->
+                    <div class="list-header" id="list-header">
+                        <div class="list-column" style="flex: 2;">Mangá</div>
+                        <div class="list-column" style="width: auto; min-width: 100px;">Gênero</div>
+                        <div class="list-column" style="width: 120px; flex-shrink: 0;">Status</div>
+                        <div class="list-column" style="width: 100px; flex-shrink: 0;">Ações</div>
+                    </div>
                     
                     <!-- List View -->
                     <div id="list-view" class="view-content">
-                        <div class="list-header">
-                            <div class="list-column" style="flex: 2;">Mangá</div>
-                            <div class="list-column" style="width: auto; min-width: 100px;">Gênero</div>
-                            <div class="list-column" style="width: 120px; flex-shrink: 0;">Status</div>
-                            <div class="list-column" style="width: 100px; flex-shrink: 0;">Ações</div>
-                        </div>
                         <?php foreach ($mangas_filtrados as $manga): ?>
                         <div class="manga-item <?php echo !empty($manga['imported_from_api']) ? 'imported-from-api' : ''; ?>" data-manga-id="<?php echo $manga['id']; ?>">
                             <!-- Drag Handle -->

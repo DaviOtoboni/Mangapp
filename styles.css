@@ -687,6 +687,10 @@ body {
     letter-spacing: 0.05em;
     min-height: 50px;
     width: 100%;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    margin-top: 0;
 }
 
 /* Removido - não funciona com flexbox */

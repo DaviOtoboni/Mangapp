@@ -34,6 +34,16 @@ function switchView(viewMode) {
         const targetView = document.getElementById(viewMode + '-view');
         console.log('View alvo encontrada:', targetView ? targetView.id : 'NÃO ENCONTRADA');
         
+        // Control list header visibility
+        const listHeader = document.getElementById('list-header');
+        if (listHeader) {
+            if (viewMode === 'list') {
+                listHeader.style.display = 'flex';
+            } else {
+                listHeader.style.display = 'none';
+            }
+        }
+        
         if (targetView) {
             targetView.classList.add('active');
             console.log('View ativada:', targetView.id, 'Classes finais:', targetView.className);
@@ -1235,6 +1245,18 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Initialize search display
     searchResultsManager.initializeSearchDisplay();
+    
+    // Initialize list header visibility
+    const listHeader = document.getElementById('list-header');
+    if (listHeader) {
+        // Check if list view is active by default
+        const listView = document.getElementById('list-view');
+        if (listView && listView.classList.contains('active')) {
+            listHeader.style.display = 'flex';
+        } else {
+            listHeader.style.display = 'none';
+        }
+    }
     
     console.log('🔄 Iniciando carregamento de preferência de visualização...');
     
