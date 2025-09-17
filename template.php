@@ -710,11 +710,19 @@
             
             // Busca em tempo real na barra superior
             if (searchInput) {
+                // Evitar redirecionamento automático se já há um valor de pesquisa
+                const currentSearch = new URLSearchParams(window.location.search).get('search');
+                if (currentSearch) {
+                    console.log('Valor de pesquisa atual detectado, desabilitando redirecionamento automático');
+                    searchInput.value = currentSearch;
+                }
+                
                 searchInput.addEventListener('input', function(e) {
                     clearTimeout(buscaTimeout);
                     const query = e.target.value.trim();
                     
-                    if (query.length >= 2) {
+                    // Só redirecionar se não há valor de pesquisa atual e query tem pelo menos 2 caracteres
+                    if (query.length >= 2 && !currentSearch) {
                         buscaTimeout = setTimeout(() => {
                             // Redirecionar para busca
                             window.location.href = `?search=${encodeURIComponent(query)}`;

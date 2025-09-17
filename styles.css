@@ -727,6 +727,16 @@ body {
     opacity: 1;
 }
 
+/* Específico para cards view - manter grid */
+#cards-view.active {
+    display: block !important;
+}
+
+#cards-view .cards-grid {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+}
+
 /* Manga Comment */
 .manga-comment {
     max-width: 200px;

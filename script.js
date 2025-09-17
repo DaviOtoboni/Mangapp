@@ -63,9 +63,8 @@ function switchView(viewMode) {
                 console.log('Cards grid style:', cardsGrid.style.cssText);
                 console.log('Cards grid children:', cardsGrid.children.length);
                 
-                // Force visibility of cards grid
-                cardsGrid.style.display = 'grid';
-                cardsGrid.style.visibility = 'visible';
+                // Cards grid já está configurado no CSS
+                // Removido para evitar conflitos
             }
             
             if (mangaBlocks.length === 0 && viewMode === 'cards') {
@@ -108,10 +107,8 @@ function switchView(viewMode) {
         // Persist view preference using ViewStateManager
         viewStateManager.setCurrentView(viewMode);
         
-        // Reinicializar drag and drop após mudança de view
-        setTimeout(() => {
-            initDragDrop();
-        }, 300);
+        // Drag and drop já está inicializado, não precisa reinicializar
+        // Removido para evitar múltiplas inicializações
         
     } catch (error) {
         console.error('❌ Erro ao alternar visualização:', error);
@@ -751,8 +748,17 @@ const errorHandler = new ErrorHandler();
 let listSortable = null;
 let cardsSortable = null;
 
+// Flag para evitar múltiplas inicializações
+let dragDropInitialized = false;
+
 function initDragDrop() {
     console.log('🔄 Inicializando Drag and Drop...');
+    
+    // Verificar se já foi inicializado
+    if (dragDropInitialized) {
+        console.log('⚠️ Drag and Drop já foi inicializado, ignorando...');
+        return;
+    }
     
     // Verificar se Sortable está disponível
     if (typeof Sortable === 'undefined') {
@@ -831,6 +837,8 @@ function initDragDrop() {
         applySavedOrder();
     }, 100);
     
+    // Marcar como inicializado
+    dragDropInitialized = true;
     console.log('✅ Drag and Drop inicializado');
 }
 
@@ -1520,10 +1528,10 @@ document.addEventListener('DOMContentLoaded', function() {
         systemValidator.runFullValidation();
     }, 1000);
     
-    // Initialize Drag and Drop
+    // Initialize Drag and Drop uma única vez
     setTimeout(() => {
         initDragDrop();
-    }, 1000);
+    }, 500);
     
     console.log('=== FIM DEBUG CARREGAMENTO ===');
     

@@ -221,25 +221,36 @@
         .cards-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 1.5rem;
+            gap: 1rem;
+            padding: 0.5rem;
         }
         
         /* Responsividade para telas menores */
+        @media (max-width: 1400px) {
+            .cards-grid {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 0.75rem;
+            }
+        }
+        
         @media (max-width: 1200px) {
             .cards-grid {
                 grid-template-columns: repeat(3, 1fr);
+                gap: 1rem;
             }
         }
         
         @media (max-width: 900px) {
             .cards-grid {
                 grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
             }
         }
         
         @media (max-width: 600px) {
             .cards-grid {
                 grid-template-columns: 1fr;
+                gap: 1rem;
             }
         }
         
@@ -250,6 +261,8 @@
             overflow: hidden;
             transition: all 0.2s ease;
             position: relative;
+            min-height: 280px;
+            max-width: 100%;
         }
         
         .manga-block:hover {
@@ -279,29 +292,31 @@
         
         .manga-cover-large {
             width: 100%;
-            height: 200px;
+            height: 160px;
             background: var(--bg-tertiary);
             display: flex;
             align-items: center;
             justify-content: center;
             color: var(--text-secondary);
-            font-size: 3rem;
+            font-size: 2.5rem;
         }
         
         .manga-content {
-            padding: 1rem;
+            padding: 0.75rem;
         }
         
         .manga-content h3 {
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: 600;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.25rem;
+            line-height: 1.2;
         }
         
         .manga-content p {
             color: var(--text-secondary);
-            font-size: 0.9rem;
-            margin-bottom: 0.25rem;
+            font-size: 0.8rem;
+            margin-bottom: 0.15rem;
+            line-height: 1.3;
         }
         
         /* Drag and Drop States */
@@ -410,8 +425,8 @@
         </div>
         
         <div class="test-controls">
-            <button class="btn" onclick="initDragDrop()">
-                <i class="fas fa-play"></i> Inicializar Drag & Drop
+            <button class="btn" onclick="reinitializeDragDrop()">
+                <i class="fas fa-play"></i> Reinicializar Drag & Drop
             </button>
             <button class="btn btn-success" onclick="debugInfo()">
                 <i class="fas fa-bug"></i> Debug Info
@@ -422,10 +437,10 @@
         </div>
         
         <div class="view-tabs">
-            <button class="tab-btn active" onclick="switchView('list')">
+            <button class="tab-btn active" onclick="switchViewTest('list')">
                 <i class="fas fa-list"></i> Modo Lista
             </button>
-            <button class="tab-btn" onclick="switchView('cards')">
+            <button class="tab-btn" onclick="switchViewTest('cards')">
                 <i class="fas fa-th"></i> Modo Cards
             </button>
         </div>
@@ -582,6 +597,48 @@
                         <p>Status: Em andamento</p>
                     </div>
                 </div>
+                
+                <div class="manga-block" data-manga-id="6">
+                    <div class="drag-handle" title="Arrastar para reordenar">
+                        <i class="fas fa-grip-vertical"></i>
+                    </div>
+                    <div class="manga-cover-large">
+                        <i class="fas fa-book"></i>
+                    </div>
+                    <div class="manga-content">
+                        <h3>Jujutsu Kaisen</h3>
+                        <p>Lendo - Capítulo 250</p>
+                        <p>Status: Em andamento</p>
+                    </div>
+                </div>
+                
+                <div class="manga-block" data-manga-id="7">
+                    <div class="drag-handle" title="Arrastar para reordenar">
+                        <i class="fas fa-grip-vertical"></i>
+                    </div>
+                    <div class="manga-cover-large">
+                        <i class="fas fa-book"></i>
+                    </div>
+                    <div class="manga-content">
+                        <h3>Chainsaw Man</h3>
+                        <p>Completado - 150 capítulos</p>
+                        <p>Status: Finalizado</p>
+                    </div>
+                </div>
+                
+                <div class="manga-block" data-manga-id="8">
+                    <div class="drag-handle" title="Arrastar para reordenar">
+                        <i class="fas fa-grip-vertical"></i>
+                    </div>
+                    <div class="manga-cover-large">
+                        <i class="fas fa-book"></i>
+                    </div>
+                    <div class="manga-content">
+                        <h3>Spy x Family</h3>
+                        <p>Lendo - Capítulo 100</p>
+                        <p>Status: Em andamento</p>
+                    </div>
+                </div>
             </div>
         </div>
         
@@ -592,11 +649,24 @@
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     
     <script>
-        let listSortable = null;
-        let cardsSortable = null;
-        let currentView = 'list';
+        // Proteção contra conflitos com script.js
+        (function() {
+            'use strict';
+            
+            // Sobrescrever a função switchView global se existir
+            if (typeof window.switchView === 'function') {
+                console.log('⚠️ Detectado conflito com script.js, isolando funções...');
+                window.switchViewOriginal = window.switchView;
+            }
+            
+            let listSortable = null;
+            let cardsSortable = null;
+            let currentView = 'list';
+            let isInitialized = false;
         
-        function switchView(view) {
+        function switchViewTest(view) {
+            console.log('🔄 Test switchView chamada:', view);
+            
             // Atualizar botões
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             event.target.classList.add('active');
@@ -607,21 +677,26 @@
             
             currentView = view;
             
-            // Reinicializar drag and drop
-            initDragDrop();
+            // Salvar preferência no localStorage
+            localStorage.setItem('preferredViewTest', view);
+            
+            // Apenas inicializar drag and drop se ainda não foi inicializado
+            if (currentView === 'list' && !listSortable) {
+                initListDragDrop();
+            } else if (currentView === 'cards' && !cardsSortable) {
+                initCardsDragDrop();
+            }
         }
         
         function initDragDrop() {
             console.log('🔄 Inicializando Drag and Drop...');
+            console.log('📊 Estado atual - isInitialized:', isInitialized, 'isPageInitialized:', isPageInitialized);
             
-            // Destruir instâncias anteriores
-            if (listSortable) {
-                listSortable.destroy();
-                listSortable = null;
-            }
-            if (cardsSortable) {
-                cardsSortable.destroy();
-                cardsSortable = null;
+            // Verificar se já foi inicializado
+            if (isInitialized) {
+                console.log('⚠️ Drag and Drop já foi inicializado!');
+                showNotification('Drag and Drop já está ativo!');
+                return;
             }
             
             // Verificar se Sortable está disponível
@@ -631,68 +706,96 @@
                 return;
             }
             
-            try {
-                // Inicializar lista
-                const listContainer = document.querySelector('#list-view .manga-list');
-                if (listContainer) {
-                    const listItems = listContainer.querySelectorAll('[data-manga-id]');
-                    console.log('Itens na lista:', listItems.length);
-                    
-                    if (listItems.length > 0) {
-                        listSortable = new Sortable(listContainer, {
-                            handle: '.drag-handle',
-                            animation: 150,
-                            ghostClass: 'sortable-ghost',
-                            chosenClass: 'sortable-chosen',
-                            forceFallback: false,
-                            fallbackOnBody: true,
-                            swapThreshold: 0.65,
-                            onStart: (evt) => {
-                                console.log('Iniciando drag na lista:', evt.item.dataset.mangaId);
-                                showNotification('Iniciando arraste na lista...');
-                            },
-                            onEnd: (evt) => {
-                                console.log('Finalizando drag na lista:', evt.item.dataset.mangaId);
-                                updateOrder('list');
-                            }
-                        });
-                        console.log('✅ Lista sortable inicializada');
-                    }
+            console.log('✅ Iniciando criação das instâncias Sortable...');
+            
+            // Inicializar ambos os modos
+            initListDragDrop();
+            initCardsDragDrop();
+            
+            isInitialized = true;
+            console.log('🎉 Drag and Drop inicializado com sucesso!');
+            showNotification('Drag and Drop inicializado com sucesso!');
+        }
+        
+        function reinitializeDragDrop() {
+            console.log('🔄 Reinicializando Drag and Drop...');
+            
+            // Destruir instâncias existentes
+            if (listSortable) {
+                listSortable.destroy();
+                listSortable = null;
+            }
+            if (cardsSortable) {
+                cardsSortable.destroy();
+                cardsSortable = null;
+            }
+            
+            // Resetar flag de inicialização
+            isInitialized = false;
+            
+            // Reinicializar
+            initDragDrop();
+        }
+        
+        function initListDragDrop() {
+            if (listSortable) return; // Já inicializado
+            
+            const listContainer = document.querySelector('#list-view .manga-list');
+            if (listContainer) {
+                const listItems = listContainer.querySelectorAll('[data-manga-id]');
+                console.log('Itens na lista:', listItems.length);
+                
+                if (listItems.length > 0) {
+                    listSortable = new Sortable(listContainer, {
+                        handle: '.drag-handle',
+                        animation: 150,
+                        ghostClass: 'sortable-ghost',
+                        chosenClass: 'sortable-chosen',
+                        forceFallback: false,
+                        fallbackOnBody: true,
+                        swapThreshold: 0.65,
+                        onStart: (evt) => {
+                            console.log('Iniciando drag na lista:', evt.item.dataset.mangaId);
+                            showNotification('Iniciando arraste na lista...');
+                        },
+                        onEnd: (evt) => {
+                            console.log('Finalizando drag na lista:', evt.item.dataset.mangaId);
+                            updateOrder('list');
+                        }
+                    });
+                    console.log('✅ Lista sortable inicializada');
                 }
+            }
+        }
+        
+        function initCardsDragDrop() {
+            if (cardsSortable) return; // Já inicializado
+            
+            const cardsContainer = document.querySelector('#cards-view .cards-grid');
+            if (cardsContainer) {
+                const cardItems = cardsContainer.querySelectorAll('[data-manga-id]');
+                console.log('Itens nos cards:', cardItems.length);
                 
-                // Inicializar cards
-                const cardsContainer = document.querySelector('#cards-view .cards-grid');
-                if (cardsContainer) {
-                    const cardItems = cardsContainer.querySelectorAll('[data-manga-id]');
-                    console.log('Itens nos cards:', cardItems.length);
-                    
-                    if (cardItems.length > 0) {
-                        cardsSortable = new Sortable(cardsContainer, {
-                            handle: '.drag-handle',
-                            animation: 150,
-                            ghostClass: 'sortable-ghost',
-                            chosenClass: 'sortable-chosen',
-                            forceFallback: false,
-                            fallbackOnBody: true,
-                            swapThreshold: 0.65,
-                            onStart: (evt) => {
-                                console.log('Iniciando drag nos cards:', evt.item.dataset.mangaId);
-                                showNotification('Iniciando arraste nos cards...');
-                            },
-                            onEnd: (evt) => {
-                                console.log('Finalizando drag nos cards:', evt.item.dataset.mangaId);
-                                updateOrder('cards');
-                            }
-                        });
-                        console.log('✅ Cards sortable inicializados');
-                    }
+                if (cardItems.length > 0) {
+                    cardsSortable = new Sortable(cardsContainer, {
+                        handle: '.drag-handle',
+                        animation: 150,
+                        ghostClass: 'sortable-ghost',
+                        chosenClass: 'sortable-chosen',
+                        forceFallback: false,
+                        fallbackOnBody: true,
+                        swapThreshold: 0.65,
+                        onStart: (evt) => {
+                            console.log('Iniciando drag nos cards:', evt.item.dataset.mangaId);
+                            showNotification('Iniciando arraste nos cards...');
+                        },
+                        onEnd: (evt) => {
+                            console.log('Finalizando drag nos cards:', evt.item.dataset.mangaId);
+                            updateOrder('cards');
+                        }
+                    });
+                    console.log('✅ Cards sortable inicializados');
                 }
-                
-                showNotification('Drag and Drop inicializado com sucesso!');
-                
-            } catch (error) {
-                console.error('❌ Erro ao inicializar:', error);
-                showNotification('Erro ao inicializar: ' + error.message, 'error');
             }
         }
         
@@ -820,11 +923,87 @@
             }, 3000);
         }
         
+        // Carregar preferência de visualização salva
+        function loadViewPreference() {
+            try {
+                const savedView = localStorage.getItem('preferredViewTest');
+                console.log('📱 Test: Carregando preferência salva:', savedView);
+                
+                if (savedView && (savedView === 'list' || savedView === 'cards')) {
+                    currentView = savedView;
+                    
+                    // Aguardar um frame para garantir que o DOM está pronto
+                    requestAnimationFrame(() => {
+                        // Atualizar botões
+                        const tabButtons = document.querySelectorAll('.tab-btn');
+                        if (tabButtons.length > 0) {
+                            tabButtons.forEach(btn => btn.classList.remove('active'));
+                            const activeBtn = document.querySelector(`[onclick="switchViewTest('${savedView}')"]`);
+                            if (activeBtn) {
+                                activeBtn.classList.add('active');
+                            }
+                        }
+                        
+                        // Atualizar views
+                        const viewContents = document.querySelectorAll('.view-content');
+                        if (viewContents.length > 0) {
+                            viewContents.forEach(content => content.classList.remove('active'));
+                            const targetView = document.getElementById(savedView + '-view');
+                            if (targetView) {
+                                targetView.classList.add('active');
+                            }
+                        }
+                        
+                        console.log('✅ Test: Preferência carregada:', savedView);
+                    });
+                } else {
+                    console.log('ℹ️ Test: Nenhuma preferência salva encontrada, usando padrão');
+                }
+            } catch (error) {
+                console.error('❌ Test: Erro ao carregar preferência:', error);
+            }
+        }
+        
+        // Flag para evitar múltiplas inicializações
+        let isPageInitialized = false;
+        let pageLoadCount = 0;
+        
+        // Detectar recarregamentos da página
+        window.addEventListener('beforeunload', () => {
+            console.log('🔄 Página está sendo recarregada...');
+        });
+        
+        window.addEventListener('load', () => {
+            pageLoadCount++;
+            console.log('📄 Página carregada pela', pageLoadCount + 'ª vez');
+        });
+        
         // Inicializar automaticamente
         document.addEventListener('DOMContentLoaded', () => {
-            console.log('DOM carregado, inicializando...');
-            setTimeout(initDragDrop, 500);
+            pageLoadCount++;
+            console.log('🚀 DOM carregado pela', pageLoadCount + 'ª vez');
+            
+            if (isPageInitialized) {
+                console.log('⚠️ Página já foi inicializada, ignorando...');
+                return;
+            }
+            
+            console.log('🚀 Inicializando página...');
+            isPageInitialized = true;
+            
+            // Carregar preferência de visualização
+            loadViewPreference();
+            
+            // Inicializar drag and drop após um pequeno delay
+            setTimeout(() => {
+                if (!isInitialized) {
+                    console.log('🔄 Inicializando drag and drop...');
+                    initDragDrop();
+                }
+            }, 500);
         });
+        
+        })(); // Fechar a função de proteção
     </script>
 </body>
 </html>
