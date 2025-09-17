@@ -732,10 +732,7 @@ body {
     display: block !important;
 }
 
-#cards-view .cards-grid {
-    display: grid !important;
-    grid-template-columns: repeat(4, 1fr) !important;
-}
+/* Removido - definição duplicada que causava conflito */
 
 /* Manga Comment */
 .manga-comment {
@@ -751,22 +748,33 @@ body {
     border-bottom: none;
 }
 
-/* Cards View */
+/* Cards View - Layout Principal */
 .cards-grid {
     display: grid !important;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 1.5rem;
-    padding: 1.5rem;
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 1.5rem !important;
+    padding: 1.5rem !important;
     visibility: visible !important;
     opacity: 1 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+/* Específico para cards view - garantir grid */
+#cards-view .cards-grid {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 1.5rem !important;
+    padding: 1.5rem !important;
 }
 
 /* Para telas muito grandes, manter 4 cards */
 @media (min-width: 1200px) {
-    .cards-grid {
-        grid-template-columns: repeat(4, 1fr);
-        gap: 2rem;
-        padding: 2rem;
+    .cards-grid,
+    #cards-view .cards-grid {
+        grid-template-columns: repeat(4, 1fr) !important;
+        gap: 2rem !important;
+        padding: 2rem !important;
     }
 }
 
@@ -1647,98 +1655,6 @@ body {
     }
 }
 
-/* ===== DRAG AND DROP STYLES ===== */
-.drag-handle {
-    cursor: grab;
-    color: var(--text-secondary);
-    padding: 0.5rem;
-    margin-right: 0.5rem;
-    border-radius: 0.25rem;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 2rem;
-    height: 2rem;
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-color);
-}
-
-.drag-handle:hover {
-    background-color: var(--primary-color);
-    color: white;
-    border-color: var(--primary-color);
-    transform: scale(1.1);
-}
-
-.drag-handle:active {
-    cursor: grabbing;
-}
-
-/* Para o modo cards */
-.manga-block .drag-handle {
-    position: absolute;
-    top: 0.5rem;
-    right: 0.5rem;
-    z-index: 10;
-    background: rgba(0,0,0,0.7);
-    color: white;
-    border-radius: 50%;
-    width: 2rem;
-    height: 2rem;
-    min-width: 2rem;
-    margin: 0;
-}
-
-.manga-block .drag-handle:hover {
-    background: var(--primary-color);
-    transform: scale(1.1);
-}
-
-/* Estilos para elementos sendo arrastados */
-.sortable-ghost {
-    opacity: 0.4;
-    background-color: var(--bg-tertiary);
-    border: 2px dashed var(--primary-color);
-    transform: rotate(2deg);
-}
-
-.sortable-chosen {
-    cursor: grabbing;
-    transform: scale(1.02);
-    box-shadow: var(--shadow-lg);
-    z-index: 1000;
-}
-
-/* Para o modo lista */
-.manga-item.sortable-ghost {
-    opacity: 0.4;
-    background-color: var(--bg-tertiary);
-    border: 2px dashed var(--primary-color);
-    transform: rotate(2deg);
-}
-
-.manga-item.sortable-chosen {
-    cursor: grabbing;
-    transform: scale(1.02);
-    box-shadow: var(--shadow-lg);
-    z-index: 1000;
-}
-
-/* Para o modo cards */
-.manga-block.sortable-ghost {
-    opacity: 0.4;
-    background-color: var(--bg-tertiary);
-    border: 2px dashed var(--primary-color);
-    transform: rotate(2deg);
-}
-
-.manga-block.sortable-chosen {
-    cursor: grabbing;
-    transform: scale(1.05);
-    box-shadow: var(--shadow-lg);
-    z-index: 1000;
-}
 
 /* ===== ANIMATIONS ===== */
 @keyframes fadeIn {

@@ -9,8 +9,6 @@
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="api-integration.css">
     
-    <!-- SortableJS para drag and drop -->
-    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     
     <!-- Scripts da integração API -->
 </head>
@@ -170,10 +168,6 @@
                     <div id="list-view" class="view-content">
                         <?php foreach ($mangas_filtrados as $manga): ?>
                         <div class="manga-item <?php echo !empty($manga['imported_from_api']) ? 'imported-from-api' : ''; ?>" data-manga-id="<?php echo $manga['id']; ?>">
-                            <!-- Drag Handle -->
-                            <div class="drag-handle" title="Arrastar para reordenar">
-                                <i class="fas fa-grip-vertical"></i>
-                            </div>
                             <!-- Mangá Info -->
                             <div class="manga-info-compact">
                                 <div class="manga-cover-small">
@@ -272,10 +266,6 @@
                         <div class="cards-grid">
                             <?php foreach ($mangas_filtrados as $manga): ?>
                                 <div class="manga-block <?php echo !empty($manga['imported_from_api']) ? 'imported-from-api' : ''; ?>" data-manga-id="<?php echo $manga['id']; ?>">
-                                    <!-- Drag Handle -->
-                                    <div class="drag-handle" title="Arrastar para reordenar">
-                                        <i class="fas fa-grip-vertical"></i>
-                                    </div>
                                     <!-- Capa do Mangá -->
                                     <div class="manga-cover">
                                         <?php 

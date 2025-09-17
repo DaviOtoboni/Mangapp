@@ -80,7 +80,7 @@ function switchView(viewMode) {
             } else if (mangaBlocks.length > 0) {
                 console.log('✅ Mangás encontrados na view cards, forçando visibilidade...');
                 mangaBlocks.forEach((block, index) => {
-                    block.style.display = 'block';
+                    // Não aplicar display: block nos cards, deixar o CSS gerenciar
                     block.style.visibility = 'visible';
                     console.log(`Bloco ${index + 1}:`, block.style.cssText);
                 });
@@ -107,8 +107,13 @@ function switchView(viewMode) {
         // Persist view preference using ViewStateManager
         viewStateManager.setCurrentView(viewMode);
         
-        // Drag and drop já está inicializado, não precisa reinicializar
-        // Removido para evitar múltiplas inicializações
+        
+        // Forçar layout correto dos cards se for view de cards
+        if (viewMode === 'cards') {
+            setTimeout(() => {
+                forceCardsLayout();
+            }, 100);
+        }
         
     } catch (error) {
         console.error('❌ Erro ao alternar visualização:', error);
@@ -744,293 +749,47 @@ class ErrorHandler {
 // Initialize Error Handler
 const errorHandler = new ErrorHandler();
 
-// ===== DRAG AND DROP SIMPLES =====
-let listSortable = null;
-let cardsSortable = null;
-
-// Flag para evitar múltiplas inicializações
-let dragDropInitialized = false;
-
-function initDragDrop() {
-    console.log('🔄 Inicializando Drag and Drop...');
+// Função para forçar layout correto dos cards
+function forceCardsLayout() {
+    console.log('🔧 Forçando layout correto dos cards...');
     
-    // Verificar se já foi inicializado
-    if (dragDropInitialized) {
-        console.log('⚠️ Drag and Drop já foi inicializado, ignorando...');
-        return;
-    }
+    const cardsView = document.getElementById('cards-view');
+    const cardsGrid = document.querySelector('.cards-grid');
     
-    // Verificar se Sortable está disponível
-    if (typeof Sortable === 'undefined') {
-        console.error('❌ SortableJS não está carregado!');
-        return;
-    }
-    
-    // Destruir instâncias anteriores
-    if (listSortable) {
-        listSortable.destroy();
-        listSortable = null;
-    }
-    if (cardsSortable) {
-        cardsSortable.destroy();
-        cardsSortable = null;
-    }
-    
-    // Inicializar lista
-    const listContainer = document.querySelector('#list-view');
-    if (listContainer) {
-        const listItems = listContainer.querySelectorAll('[data-manga-id]');
-        console.log('Itens na lista:', listItems.length);
-        
-        if (listItems.length > 0) {
-            try {
-                listSortable = new Sortable(listContainer, {
-                    handle: '.drag-handle',
-                    animation: 150,
-                    ghostClass: 'sortable-ghost',
-                    chosenClass: 'sortable-chosen',
-                    onStart: (evt) => {
-                        console.log('Drag iniciado na lista:', evt.item.dataset.mangaId);
-                    },
-                    onEnd: (evt) => {
-                        console.log('Drag finalizado na lista:', evt.item.dataset.mangaId);
-                        updateOrder('list');
-                    }
-                });
-                console.log('✅ Lista sortable inicializada');
-            } catch (error) {
-                console.error('❌ Erro na lista:', error);
-            }
-        }
-    }
-    
-    // Inicializar cards
-    const cardsContainer = document.querySelector('#cards-view');
-    if (cardsContainer) {
-        const cardItems = cardsContainer.querySelectorAll('[data-manga-id]');
-        console.log('Itens nos cards:', cardItems.length);
-        
-        if (cardItems.length > 0) {
-            try {
-                cardsSortable = new Sortable(cardsContainer, {
-                    handle: '.drag-handle',
-                    animation: 150,
-                    ghostClass: 'sortable-ghost',
-                    chosenClass: 'sortable-chosen',
-                    onStart: (evt) => {
-                        console.log('Drag iniciado nos cards:', evt.item.dataset.mangaId);
-                    },
-                    onEnd: (evt) => {
-                        console.log('Drag finalizado nos cards:', evt.item.dataset.mangaId);
-                        updateOrder('cards');
-                    }
-                });
-                console.log('✅ Cards sortable inicializados');
-            } catch (error) {
-                console.error('❌ Erro nos cards:', error);
-            }
-        }
-    }
-    
-    // Aplicar ordem salva após inicializar
-    setTimeout(() => {
-        applySavedOrder();
-    }, 100);
-    
-    // Marcar como inicializado
-    dragDropInitialized = true;
-    console.log('✅ Drag and Drop inicializado');
-}
-
-function updateOrder(viewType) {
-    console.log('🔄 updateOrder chamada para:', viewType);
-    
-    const container = viewType === 'list' 
-        ? document.querySelector('#list-view')
-        : document.querySelector('#cards-view');
-        
-    if (!container) {
-        console.error('❌ Container não encontrado para:', viewType);
-        return;
-    }
-    
-    const items = container.querySelectorAll('[data-manga-id]');
-    console.log('Itens encontrados:', items.length);
-    
-    if (items.length === 0) {
-        console.warn('⚠️ Nenhum item encontrado para salvar ordem');
-        // Não retornar aqui, pode ser que a página ainda esteja carregando
-        return;
-    }
-    
-    const order = Array.from(items).map(item => item.dataset.mangaId);
-    
-    console.log('Nova ordem:', order);
-    
-    try {
-        // Salvar no localStorage
-        localStorage.setItem(`mangaOrder_${viewType}`, JSON.stringify(order));
-        console.log('✅ Ordem salva no localStorage');
-        
-        // Enviar para o servidor
-        saveOrderToServer(order, viewType);
-        
-    } catch (error) {
-        console.error('❌ Erro ao salvar ordem:', error);
-    }
-}
-
-// Função para enviar ordem para o servidor
-async function saveOrderToServer(order, viewType) {
-    try {
-        console.log('📤 Enviando ordem para o servidor...');
-        
-        const response = await fetch('update-order.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                order: order,
-                view_type: viewType
-            })
-        });
-        
-        const result = await response.json();
-        
-        if (result.success) {
-            console.log('✅ Ordem salva no servidor:', result.message);
+    if (cardsView && cardsGrid) {
+        // Garantir que a view está ativa
+        if (cardsView.classList.contains('active')) {
+            console.log('✅ Cards view ativa, aplicando layout...');
             
-            // Mostrar notificação de sucesso
-            if (typeof showNotification === 'function') {
-                showNotification(`Ordem salva! ${result.message}`);
-            } else {
-                console.log('ℹ️ Função showNotification não disponível');
-            }
+            // Forçar estilos CSS inline para garantir grid
+            cardsGrid.style.cssText = `
+                display: grid !important;
+                grid-template-columns: repeat(4, 1fr) !important;
+                gap: 1.5rem !important;
+                padding: 1.5rem !important;
+                visibility: visible !important;
+                opacity: 1 !important;
+                width: 100% !important;
+                box-sizing: border-box !important;
+            `;
+            
+            // Garantir que os cards individuais não tenham display: block
+            const mangaBlocks = cardsGrid.querySelectorAll('.manga-block');
+            mangaBlocks.forEach((block, index) => {
+                // Remover qualquer display: block que possa ter sido aplicado
+                if (block.style.display === 'block') {
+                    block.style.display = '';
+                    console.log(`Card ${index + 1}: display: block removido`);
+                }
+            });
+            
+            console.log('✅ Layout dos cards forçado com sucesso');
         } else {
-            console.error('❌ Erro do servidor:', result.message);
-            
-            // Mostrar notificação de erro
-            if (typeof showNotification === 'function') {
-                showNotification(`Erro: ${result.message}`, 'error');
-            }
+            console.log('ℹ️ Cards view não está ativa, pulando...');
         }
-        
-    } catch (error) {
-        console.error('❌ Erro ao enviar para servidor:', error);
-        
-        // Mostrar notificação de erro de rede
-        if (typeof showNotification === 'function') {
-            showNotification('Erro de conexão. Ordem salva localmente.', 'error');
-        }
-    }
-}
-
-// Função para restaurar ordem salva
-function restoreOrder(viewType) {
-    console.log('🔄 restoreOrder chamada para:', viewType);
-    
-    const container = viewType === 'list' 
-        ? document.querySelector('#list-view')
-        : document.querySelector('#cards-view');
-        
-    if (!container) {
-        console.error('❌ Container não encontrado para:', viewType);
-        return false;
-    }
-    
-    const savedOrder = localStorage.getItem(`mangaOrder_${viewType}`);
-    if (!savedOrder) {
-        console.log('ℹ️ Nenhuma ordem salva encontrada para:', viewType);
-        return false;
-    }
-    
-    console.log('📦 Ordem salva encontrada:', savedOrder);
-    
-    try {
-        const order = JSON.parse(savedOrder);
-        console.log('Ordem salva encontrada:', order);
-        
-        const items = container.querySelectorAll('[data-manga-id]');
-        if (items.length === 0) return false;
-        
-        // Criar um mapa de IDs para elementos
-        const itemMap = new Map();
-        items.forEach(item => {
-            itemMap.set(item.dataset.mangaId, item);
-        });
-        
-        // Reordenar elementos conforme ordem salva
-        const orderedItems = [];
-        order.forEach(id => {
-            if (itemMap.has(id)) {
-                orderedItems.push(itemMap.get(id));
-            }
-        });
-        
-        // Adicionar itens que não estavam na ordem salva (novos mangás)
-        items.forEach(item => {
-            if (!order.includes(item.dataset.mangaId)) {
-                orderedItems.push(item);
-            }
-        });
-        
-        // Aplicar nova ordem no DOM
-        orderedItems.forEach(item => {
-            container.appendChild(item);
-        });
-        
-        console.log('Ordem restaurada com sucesso!');
-        return true;
-        
-    } catch (error) {
-        console.error('Erro ao restaurar ordem:', error);
-        return false;
-    }
-}
-
-// Função para aplicar ordem em ambas as visualizações
-function applySavedOrder() {
-    console.log('🔄 Aplicando ordem salva...');
-    
-    // Verificar se há mangás na página
-    const listView = document.querySelector('#list-view');
-    const cardsView = document.querySelector('#cards-view');
-    
-    if (listView) {
-        const listItems = listView.querySelectorAll('[data-manga-id]');
-        console.log('Mangás na lista:', listItems.length);
-    }
-    
-    if (cardsView) {
-        const cardItems = cardsView.querySelectorAll('[data-manga-id]');
-        console.log('Mangás nos cards:', cardItems.length);
-    }
-    
-    const listRestored = restoreOrder('list');
-    const cardsRestored = restoreOrder('cards');
-    
-    if (listRestored || cardsRestored) {
-        console.log('✅ Ordem restaurada com sucesso!');
-        showNotification('Ordem dos mangás restaurada!');
     } else {
-        console.log('ℹ️ Nenhuma ordem salva encontrada');
+        console.log('⚠️ Cards view ou grid não encontrados');
     }
-}
-
-// Função para limpar ordem salva (útil para testes)
-function clearSavedOrder() {
-    localStorage.removeItem('mangaOrder_list');
-    localStorage.removeItem('mangaOrder_cards');
-    console.log('🗑️ Ordem salva removida');
-    showNotification('Ordem salva removida!');
-}
-
-// Função para verificar se há ordem salva
-function hasSavedOrder() {
-    const listOrder = localStorage.getItem('mangaOrder_list');
-    const cardsOrder = localStorage.getItem('mangaOrder_cards');
-    return !!(listOrder || cardsOrder);
 }
 
 function showNotification(message) {
@@ -1249,152 +1008,6 @@ window.testPersistence = testPersistence;
 window.forceApplyViewState = forceApplyViewState;
 window.runSystemValidation = () => systemValidator.runFullValidation();
 
-// Funções de teste para drag and drop
-window.testDragDrop = function() {
-    console.log('🧪 Testando Drag and Drop...');
-    initDragDrop();
-};
-
-// Funções de teste para sistema de ordem
-window.testOrderSystem = function() {
-    console.log('🧪 Testando Sistema de Ordem...');
-    console.log('1. Há ordem salva?', hasSavedOrder());
-    console.log('2. Aplicando ordem salva...');
-    applySavedOrder();
-};
-
-window.clearOrder = function() {
-    console.log('🧪 Limpando ordem salva...');
-    clearSavedOrder();
-};
-
-window.debugOrder = function() {
-    console.log('🔍 DEBUG DO SISTEMA DE ORDEM');
-    console.log('============================');
-    
-    const listOrder = localStorage.getItem('mangaOrder_list');
-    const cardsOrder = localStorage.getItem('mangaOrder_cards');
-    
-    console.log('1. Ordem da lista salva:', listOrder ? JSON.parse(listOrder) : 'Nenhuma');
-    console.log('2. Ordem dos cards salva:', cardsOrder ? JSON.parse(cardsOrder) : 'Nenhuma');
-    console.log('3. Há ordem salva?', hasSavedOrder());
-    
-    const listView = document.querySelector('#list-view');
-    const cardsView = document.querySelector('#cards-view');
-    
-    if (listView) {
-        const listItems = listView.querySelectorAll('[data-manga-id]');
-        const currentListOrder = Array.from(listItems).map(item => item.dataset.mangaId);
-        console.log('4. Ordem atual da lista:', currentListOrder);
-    }
-    
-    if (cardsView) {
-        const cardItems = cardsView.querySelectorAll('[data-manga-id]');
-        const currentCardsOrder = Array.from(cardItems).map(item => item.dataset.mangaId);
-        console.log('5. Ordem atual dos cards:', currentCardsOrder);
-    }
-    
-    console.log('\nComandos disponíveis:');
-    console.log('- testOrderSystem() - Testar sistema');
-    console.log('- clearOrder() - Limpar ordem salva');
-    console.log('- applySavedOrder() - Aplicar ordem salva');
-};
-
-window.testSimpleDrag = function() {
-    console.log('🧪 Teste Simples de Drag and Drop...');
-    
-    if (typeof Sortable === 'undefined') {
-        console.error('❌ SortableJS não está carregado!');
-        return;
-    }
-    
-    const testContainer = document.createElement('div');
-    testContainer.style.cssText = `
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background: white;
-        padding: 20px;
-        border: 2px solid #007bff;
-        border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-        z-index: 10000;
-        min-width: 300px;
-    `;
-    
-    testContainer.innerHTML = `
-        <h3>Teste Simples</h3>
-        <div id="test-list">
-            <div data-id="1" style="padding: 10px; background: #f0f0f0; margin: 5px; cursor: grab; border-radius: 4px;">
-                <span class="drag-handle" style="margin-right: 10px;">⋮⋮</span> Item 1
-            </div>
-            <div data-id="2" style="padding: 10px; background: #f0f0f0; margin: 5px; cursor: grab; border-radius: 4px;">
-                <span class="drag-handle" style="margin-right: 10px;">⋮⋮</span> Item 2
-            </div>
-            <div data-id="3" style="padding: 10px; background: #f0f0f0; margin: 5px; cursor: grab; border-radius: 4px;">
-                <span class="drag-handle" style="margin-right: 10px;">⋮⋮</span> Item 3
-            </div>
-        </div>
-        <button onclick="this.parentElement.remove()" style="margin-top: 10px; padding: 5px 10px;">Fechar</button>
-    `;
-    
-    document.body.appendChild(testContainer);
-    
-    try {
-        const sortable = new Sortable(document.getElementById('test-list'), {
-            handle: '.drag-handle',
-            animation: 150,
-            onStart: (evt) => {
-                console.log('✅ Drag iniciado:', evt.item.dataset.id);
-            },
-            onEnd: (evt) => {
-                console.log('✅ Drag finalizado:', evt.item.dataset.id);
-                const order = Array.from(evt.to.children).map(item => item.dataset.id);
-                console.log('Nova ordem:', order);
-            }
-        });
-        
-        console.log('✅ Teste simples criado! Tente arrastar os itens.');
-        
-    } catch (error) {
-        console.error('❌ Erro no teste simples:', error);
-        testContainer.remove();
-    }
-};
-
-window.debugDragDrop = function() {
-    console.log('🔍 DEBUG SIMPLES DO DRAG AND DROP');
-    console.log('==================================');
-    
-    console.log('1. SortableJS:', typeof Sortable !== 'undefined' ? 'OK' : 'ERRO');
-    
-    const listView = document.querySelector('#list-view');
-    const cardsView = document.querySelector('#cards-view');
-    console.log('2. List view:', listView ? 'OK' : 'ERRO');
-    console.log('3. Cards view:', cardsView ? 'OK' : 'ERRO');
-    
-    if (listView) {
-        const items = listView.querySelectorAll('[data-manga-id]');
-        const handles = listView.querySelectorAll('.drag-handle');
-        console.log('4. Itens na lista:', items.length);
-        console.log('5. Handles na lista:', handles.length);
-    }
-    
-    if (cardsView) {
-        const items = cardsView.querySelectorAll('[data-manga-id]');
-        const handles = cardsView.querySelectorAll('.drag-handle');
-        console.log('6. Itens nos cards:', items.length);
-        console.log('7. Handles nos cards:', handles.length);
-    }
-    
-    console.log('8. List Sortable:', listSortable ? 'ATIVA' : 'INATIVA');
-    console.log('9. Cards Sortable:', cardsSortable ? 'ATIVA' : 'INATIVA');
-    
-    console.log('\nPara testar:');
-    console.log('- testDragDrop() - Reinicializar');
-    console.log('- testSimpleDrag() - Teste isolado');
-};
 
 // Load persisted view preference
 function loadPersistedView() {
@@ -1528,10 +1141,11 @@ document.addEventListener('DOMContentLoaded', function() {
         systemValidator.runFullValidation();
     }, 1000);
     
-    // Initialize Drag and Drop uma única vez
+    
+    // Forçar layout correto dos cards após carregamento
     setTimeout(() => {
-        initDragDrop();
-    }, 500);
+        forceCardsLayout();
+    }, 1000);
     
     console.log('=== FIM DEBUG CARREGAMENTO ===');
     
