@@ -180,6 +180,56 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') 
                 $_SESSION['theme'] = $_SESSION['theme'] === 'light' ? 'dark' : 'light';
                 echo json_encode(['success' => true, 'theme' => $_SESSION['theme']]);
                 exit;
+                
+            case 'update_order':
+                // Debug: verificar dados recebidos
+                error_log('Update order - POST data: ' . print_r($_POST, true));
+                
+                if (isset($_POST['manga_order'])) {
+                    try {
+                        // Decodificar JSON se necessário
+                        $mangaOrder = $_POST['manga_order'];
+                        if (is_string($mangaOrder)) {
+                            $mangaOrder = json_decode($mangaOrder, true);
+                        }
+                        
+                        // Debug: verificar ordem decodificada
+                        error_log('Manga order decoded: ' . print_r($mangaOrder, true));
+                        
+                        if (!is_array($mangaOrder) || empty($mangaOrder)) {
+                            echo json_encode(['success' => false, 'message' => 'Array de ordem inválido']);
+                            exit;
+                        }
+                        
+                        // Reordenar mangás na sessão
+                        $reorderedMangas = [];
+                        foreach ($mangaOrder as $mangaId) {
+                            foreach ($_SESSION['mangas'] as $manga) {
+                                if ($manga['id'] === $mangaId) {
+                                    $reorderedMangas[] = $manga;
+                                    break;
+                                }
+                            }
+                        }
+                        
+                        // Verificar se todos os mangás foram encontrados
+                        if (count($reorderedMangas) !== count($mangaOrder)) {
+                            echo json_encode(['success' => false, 'message' => 'Alguns mangás não foram encontrados']);
+                            exit;
+                        }
+                        
+                        // Atualizar sessão
+                        $_SESSION['mangas'] = $reorderedMangas;
+                        
+                        echo json_encode(['success' => true, 'message' => 'Ordem atualizada com sucesso']);
+                    } catch (Exception $e) {
+                        error_log('Error in update_order: ' . $e->getMessage());
+                        echo json_encode(['success' => false, 'message' => 'Erro: ' . $e->getMessage()]);
+                    }
+                } else {
+                    echo json_encode(['success' => false, 'message' => 'Dados inválidos - manga_order não encontrado']);
+                }
+                exit;
         }
         
         // Redirecionar para evitar reenvio do formulário

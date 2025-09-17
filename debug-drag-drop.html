@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Drag and Drop - MangApp</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .debug-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-item {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            cursor: move;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        .test-item:hover {
+            background: #e9ecef;
+        }
+        .drag-handle {
+            position: absolute;
+            left: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c757d;
+            cursor: grab;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+        .test-item:hover .drag-handle {
+            opacity: 1;
+        }
+        .item-content {
+            margin-left: 30px;
+        }
+        .debug-info {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e9ecef;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .sortable-ghost {
+            opacity: 0.4;
+            background: #f8f9fa;
+            border: 2px dashed #007bff;
+        }
+        .sortable-chosen {
+            cursor: grabbing;
+        }
+        .sortable-drag {
+            opacity: 0.8;
+            transform: rotate(2deg);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="debug-container">
+        <h1>Debug Drag and Drop - MangApp</h1>
+        <p>Teste simples para verificar se os dados estão sendo enviados corretamente.</p>
+        
+        <div id="test-list">
+            <div class="test-item" data-manga-id="test1">
+                <div class="drag-handle"><i class="fas fa-grip-vertical"></i></div>
+                <div class="item-content">
+                    <strong>Item 1</strong> - ID: test1
+                </div>
+            </div>
+            <div class="test-item" data-manga-id="test2">
+                <div class="drag-handle"><i class="fas fa-grip-vertical"></i></div>
+                <div class="item-content">
+                    <strong>Item 2</strong> - ID: test2
+                </div>
+            </div>
+            <div class="test-item" data-manga-id="test3">
+                <div class="drag-handle"><i class="fas fa-grip-vertical"></i></div>
+                <div class="item-content">
+                    <strong>Item 3</strong> - ID: test3
+                </div>
+            </div>
+        </div>
+        
+        <div class="debug-info" id="debug-info">
+            Debug info will appear here...
+        </div>
+    </div>
+
+    <!-- SortableJS Library -->
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+    
+    <script>
+        let sortable = null;
+        
+        function updateDebugInfo(message) {
+            const debugInfo = document.getElementById('debug-info');
+            const timestamp = new Date().toLocaleTimeString();
+            debugInfo.innerHTML += `[${timestamp}] ${message}<br>`;
+            debugInfo.scrollTop = debugInfo.scrollHeight;
+        }
+        
+        function initializeSortable() {
+            const container = document.getElementById('test-list');
+            
+            if (sortable) {
+                sortable.destroy();
+            }
+            
+            sortable = new Sortable(container, {
+                handle: '.drag-handle',
+                animation: 150,
+                ghostClass: 'sortable-ghost',
+                chosenClass: 'sortable-chosen',
+                dragClass: 'sortable-drag',
+                onStart: (evt) => {
+                    updateDebugInfo('Drag started on item: ' + evt.item.dataset.mangaId);
+                },
+                onEnd: (evt) => {
+                    updateDebugInfo('Drag ended');
+                    updateOrder();
+                }
+            });
+            
+            updateDebugInfo('Sortable initialized');
+        }
+        
+        function updateOrder() {
+            const container = document.getElementById('test-list');
+            const items = container.querySelectorAll('.test-item');
+            const newOrder = Array.from(items).map(el => el.dataset.mangaId);
+            
+            updateDebugInfo('New order: ' + JSON.stringify(newOrder));
+            
+            // Simular envio para o servidor
+            const formData = new FormData();
+            formData.append('action', 'update_order');
+            formData.append('manga_order', JSON.stringify(newOrder));
+            
+            updateDebugInfo('Sending data: action=update_order, manga_order=' + JSON.stringify(newOrder));
+            
+            // Simular resposta do servidor
+            setTimeout(() => {
+                updateDebugInfo('Simulated server response: success');
+            }, 500);
+        }
+        
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof Sortable !== 'undefined') {
+                initializeSortable();
+                updateDebugInfo('Page loaded, SortableJS available');
+            } else {
+                updateDebugInfo('ERROR: SortableJS not loaded');
+            }
+        });
+    </script>
+</body>
+</html>

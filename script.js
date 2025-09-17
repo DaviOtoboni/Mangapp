@@ -1355,6 +1355,191 @@ function handleEditFinalizadoChange(checkbox) {
     }
 }
 
+// SortableJS Drag and Drop Manager
+class SortableManager {
+    constructor() {
+        this.listSortable = null;
+        this.cardsSortable = null;
+        this.notification = null;
+        this.init();
+    }
+    
+    init() {
+        this.createNotification();
+        this.initializeSortable();
+        
+        // Reinitialize when view changes
+        document.addEventListener('viewChanged', () => {
+            setTimeout(() => this.initializeSortable(), 100);
+        });
+    }
+    
+    createNotification() {
+        this.notification = document.createElement('div');
+        this.notification.className = 'drag-notification';
+        this.notification.innerHTML = '<i class="fas fa-check-circle"></i> <span>Ordem atualizada com sucesso!</span>';
+        document.body.appendChild(this.notification);
+    }
+    
+    showNotification(message, isError = false) {
+        this.notification.querySelector('span').textContent = message;
+        this.notification.className = `drag-notification ${isError ? 'error' : ''}`;
+        this.notification.classList.add('show');
+        
+        setTimeout(() => {
+            this.notification.classList.remove('show');
+        }, 3000);
+    }
+    
+    initializeSortable() {
+        // Destroy existing instances
+        if (this.listSortable) {
+            this.listSortable.destroy();
+        }
+        if (this.cardsSortable) {
+            this.cardsSortable.destroy();
+        }
+        
+        // Initialize list view sortable
+        const listView = document.getElementById('list-view');
+        if (listView) {
+            this.listSortable = new Sortable(listView, {
+                handle: '.drag-handle',
+                animation: 150,
+                ghostClass: 'sortable-ghost',
+                chosenClass: 'sortable-chosen',
+                dragClass: 'sortable-drag',
+                onStart: (evt) => {
+                    this.addDragHandles(listView);
+                },
+                onEnd: (evt) => {
+                    this.updateOrder('list');
+                }
+            });
+        }
+        
+        // Initialize cards view sortable
+        const cardsGrid = document.querySelector('.cards-grid');
+        if (cardsGrid) {
+            this.cardsSortable = new Sortable(cardsGrid, {
+                handle: '.drag-handle',
+                animation: 150,
+                ghostClass: 'sortable-ghost',
+                chosenClass: 'sortable-chosen',
+                dragClass: 'sortable-drag',
+                onStart: (evt) => {
+                    this.addDragHandles(cardsGrid);
+                },
+                onEnd: (evt) => {
+                    this.updateOrder('cards');
+                }
+            });
+        }
+        
+        // Add drag handles to existing items
+        this.addDragHandles(listView);
+        this.addDragHandles(cardsGrid);
+    }
+    
+    addDragHandles(container) {
+        if (!container) return;
+        
+        const items = container.querySelectorAll('.manga-item, .manga-block');
+        items.forEach(item => {
+            // Check if drag handle already exists
+            if (!item.querySelector('.drag-handle')) {
+                const dragHandle = document.createElement('div');
+                dragHandle.className = 'drag-handle';
+                dragHandle.innerHTML = '<i class="fas fa-grip-vertical"></i>';
+                
+                // Make item position relative for absolute positioning of handle
+                item.style.position = 'relative';
+                item.insertBefore(dragHandle, item.firstChild);
+            }
+        });
+    }
+    
+    async updateOrder(viewType) {
+        const container = viewType === 'list' ? 
+            document.getElementById('list-view') : 
+            document.querySelector('.cards-grid');
+            
+        if (!container) {
+            console.error('Container not found for view type:', viewType);
+            return;
+        }
+        
+        // Para lista, pegar os .manga-item, para cards pegar .manga-block
+        const items = viewType === 'list' ? 
+            container.querySelectorAll('.manga-item') : 
+            container.querySelectorAll('.manga-block');
+            
+        const newOrder = Array.from(items).map(el => el.dataset.mangaId);
+        
+        // Debug: verificar se os IDs estão corretos
+        console.log('New order array:', newOrder);
+        console.log('Container children:', container.children);
+        
+        // Verificar se há IDs válidos
+        if (newOrder.length === 0 || newOrder.some(id => !id)) {
+            console.error('Invalid manga IDs found:', newOrder);
+            this.showNotification('Erro: IDs de mangá inválidos', true);
+            return;
+        }
+        
+        try {
+            const formData = new FormData();
+            formData.append('action', 'update_order');
+            formData.append('manga_order', JSON.stringify(newOrder));
+            
+            // Debug: verificar dados enviados
+            console.log('Sending data:', {
+                action: 'update_order',
+                manga_order: JSON.stringify(newOrder)
+            });
+            
+            const response = await fetch(window.location.href, {
+                method: 'POST',
+                body: formData
+            });
+            
+            // Debug: verificar resposta
+            const responseText = await response.text();
+            console.log('Response text:', responseText);
+            
+            let result;
+            try {
+                result = JSON.parse(responseText);
+            } catch (e) {
+                console.error('Failed to parse JSON response:', responseText);
+                this.showNotification('Erro: Resposta inválida do servidor', true);
+                return;
+            }
+            
+            if (result.success) {
+                this.showNotification('Ordem atualizada com sucesso!');
+                console.log('Order updated successfully:', newOrder);
+            } else {
+                this.showNotification('Erro ao atualizar ordem: ' + result.message, true);
+                console.error('Error updating order:', result.message);
+            }
+        } catch (error) {
+            console.error('Error updating order:', error);
+            this.showNotification('Erro de conexão ao atualizar ordem', true);
+        }
+    }
+}
+
+// Initialize Sortable Manager when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    // Wait for SortableJS to be available
+    if (typeof Sortable !== 'undefined') {
+        window.sortableManager = new SortableManager();
+    } else {
+        console.error('SortableJS not loaded');
+    }
+});
+
 // Make functions globally available
 window.blockTotalChapters = blockTotalChapters;
 window.toggleMutuallyExclusive = toggleMutuallyExclusive;

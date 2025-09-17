@@ -754,6 +754,95 @@ body {
     grid-template-columns: repeat(4, 1fr) !important;
     gap: 1.5rem !important;
     padding: 1.5rem !important;
+}
+
+/* SortableJS Drag and Drop Styles */
+.manga-item, .manga-block {
+    cursor: move;
+    transition: all 0.3s ease;
+    user-select: none;
+}
+
+.manga-item:hover, .manga-block:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* SortableJS dragging state */
+.sortable-ghost {
+    opacity: 0.4;
+    background: #f8f9fa;
+    border: 2px dashed #007bff;
+}
+
+.sortable-chosen {
+    cursor: grabbing;
+}
+
+.sortable-drag {
+    opacity: 0.8;
+    transform: rotate(2deg);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+    z-index: 1000;
+}
+
+/* Drag handle */
+.drag-handle {
+    position: absolute;
+    left: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6c757d;
+    cursor: grab;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    z-index: 10;
+}
+
+.manga-item:hover .drag-handle,
+.manga-block:hover .drag-handle {
+    opacity: 1;
+}
+
+.drag-handle:active {
+    cursor: grabbing;
+}
+
+/* Visual feedback for drop zones */
+.sortable-drag-over {
+    border: 2px dashed #28a745;
+    background-color: rgba(40, 167, 69, 0.1);
+}
+
+/* Animation for smooth reordering */
+.manga-item, .manga-block {
+    transition: transform 0.3s ease, opacity 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Notification styles */
+.drag-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: #28a745;
+    color: white;
+    padding: 1rem 1.5rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    z-index: 10000;
+    opacity: 0;
+    transform: translateX(100%);
+    transition: all 0.3s ease;
+}
+
+.drag-notification.show {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.drag-notification.error {
+    background: #dc3545;
+}
     visibility: visible !important;
     opacity: 1 !important;
     width: 100% !important;
