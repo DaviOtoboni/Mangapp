@@ -9,11 +9,16 @@ if (defined('MANGAPP_API_INITIALIZED')) {
     return;
 }
 
+// Definir constantes necessárias antes de incluir config-simple.php
+if (!defined('LOCAL_SYSTEM_INITIALIZED')) {
+    define('LOCAL_SYSTEM_INITIALIZED', true);
+}
+
 // Carregar autoloader para novas classes
 require_once __DIR__ . '/classes/autoloader.php';
 
 // Incluir configuração primeiro
-require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/config-simple.php';
 
 // Sistema local apenas - classes de API removidas
 // Carregar apenas classes essenciais que existem
@@ -27,9 +32,6 @@ if (!class_exists('MangaDataProcessor')) {
 // Classes de API removidas para simplificar o sistema
 
 // Marcar como inicializado (apenas se não foi definido antes)
-if (!defined('LOCAL_SYSTEM_INITIALIZED')) {
-    define('LOCAL_SYSTEM_INITIALIZED', true);
-}
 if (!defined('MANGAPP_LOCAL_INITIALIZED')) {
     define('MANGAPP_LOCAL_INITIALIZED', true);
 }

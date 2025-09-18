@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MangApp - Gerenciador de Mangás</title>
+    <title>MagApp - Gerencie seu progresso!</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles-games.css">
@@ -19,11 +19,11 @@
                 <div class="navbar-left">
                     <a href="index-games.php" class="logo">
                         <i class="fas fa-book-open"></i>
-                        MangApp
+                        MagApp
                     </a>
                     <div class="search-bar">
                         <i class="fas fa-search search-icon"></i>
-                        <input type="text" class="search-input" placeholder="Pesquisar mangás..." 
+                        <input type="text" class="search-input" placeholder="Pesquisar jogos..." 
                                onkeypress="if(event.key==='Enter') window.location.href='search-results.php?q='+encodeURIComponent(this.value)">
                     </div>
                 </div>
@@ -49,44 +49,44 @@
         <div class="container">
             <!-- Page Header -->
             <div class="page-header">
-                <h1 class="page-title">Gerenciador de Mangás</h1>
-                <p class="page-subtitle">Controle seu progresso de leitura de mangás</p>
+                <h1 class="page-title">Gerenciador de Jogos</h1>
+                <p class="page-subtitle">Controle seu progresso em jogos</p>
             </div>
 
             <!-- Metrics -->
             <div class="metrics-grid">
                 <div class="metric-card total">
-                    <div class="metric-value"><?php echo $total_mangas; ?></div>
+                    <div class="metric-value"><?php echo $total_jogos; ?></div>
                     <div class="metric-label">Total</div>
                 </div>
-                <div class="metric-card lendo">
-                    <div class="metric-value"><?php echo $mangas_lendo; ?></div>
-                    <div class="metric-label">Lendo</div>
+                <div class="metric-card jogando">
+                    <div class="metric-value"><?php echo $jogos_jogando; ?></div>
+                    <div class="metric-label">Jogando</div>
                 </div>
                 <div class="metric-card pretendo">
-                    <div class="metric-value"><?php echo $mangas_pretendo; ?></div>
-                    <div class="metric-label">Pretendo Ler</div>
+                    <div class="metric-value"><?php echo $jogos_pretendo; ?></div>
+                    <div class="metric-label">Pretendo jogar</div>
                 </div>
                 <div class="metric-card abandonado">
-                    <div class="metric-value"><?php echo $mangas_abandonados; ?></div>
+                    <div class="metric-value"><?php echo $jogos_abandonados; ?></div>
                     <div class="metric-label">Abandonados</div>
                 </div>
                 <div class="metric-card finalizados">
-                    <div class="metric-value"><?php echo $mangas_finalizados; ?></div>
+                    <div class="metric-value"><?php echo $jogos_finalizados; ?></div>
                     <div class="metric-label">Concluídos</div>
                 </div>
             </div>
 
-            <!-- Manga List -->
-            <div class="manga-list">
-                <div class="manga-list-header">
-                    <div class="manga-list-title">
-                        <h3>Lista de Mangás</h3>
+            <!-- Games List -->
+            <div class="jogos-list">
+                <div class="jogos-list-header">
+                    <div class="jogos-list-title">
+                        <h3>Lista de Jogos</h3>
                         <span class="search-results" id="search-results" style="display: none;">
                             - Resultados para: "<span id="search-term"></span>"
                         </span>
                     </div>
-                    <div class="manga-list-actions">
+                    <div class="jogos-list-actions">
                         <div class="view-toggle">
                             <button class="view-btn" onclick="switchView('list')" data-view="list">
                                 <i class="fas fa-list"></i> Lista
@@ -97,24 +97,24 @@
                         </div>
                         <form class="search-form-inline" method="GET">
                             <input type="text" name="search" class="search-input-inline" 
-                                   placeholder="Pesquisar mangás..." 
+                                   placeholder="Pesquisar jogos..." 
                                    value="<?php echo htmlspecialchars($termo_pesquisa); ?>">
                             <button type="submit" class="search-btn-inline">
                                 <i class="fas fa-search"></i>
                             </button>
                         </form>
-                        <button class="add-manga-btn-inline" onclick="openAddMangaModal()">
-                            <i class="fas fa-plus"></i> Adicionar Mangá
+                        <button class="add-jogos-btn-inline" onclick="openAddjogosModal()">
+                            <i class="fas fa-plus"></i> Adicionar Jogo
                         </button>
                     </div>
                 </div>
                 
-                <?php if (empty($mangas_filtrados) && empty($resultados_api)): ?>
+                <?php if (empty($jogos_filtrados) && empty($resultados_api)): ?>
                     <div class="empty-state" style="padding: 3rem 2rem; text-align: center; color: var(--text-secondary);">
                         <?php if (!empty($termo_pesquisa)): ?>
                             <i class="fas fa-search" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>
                             <h3 style="margin-bottom: 0.5rem; color: var(--text-primary);">Nenhum resultado encontrado</h3>
-                            <p>Nenhum mangá encontrado para "<strong><?php echo htmlspecialchars($termo_pesquisa); ?></strong>"</p>
+                            <p>Nenhum jogo encontrado para "<strong><?php echo htmlspecialchars($termo_pesquisa); ?></strong>"</p>
                             <div style="margin-top: 2rem;">
                                 <a href="search-results.php?q=<?php echo urlencode($termo_pesquisa); ?>" 
                                    class="btn" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 0.5rem; cursor: pointer; margin-right: 1rem; text-decoration: none;">
@@ -125,15 +125,15 @@
                                 </a>
                             </div>
                         <?php else: ?>
-                            <i class="fas fa-book-open" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>
-                            <h3 style="margin-bottom: 0.5rem; color: var(--text-primary);">Nenhum mangá adicionado</h3>
-                            <p>Comece adicionando seu primeiro mangá!</p>
+                            <i class="fas fa-gamepad" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+                            <h3 style="margin-bottom: 0.5rem; color: var(--text-primary);">Nenhum jogo adicionado</h3>
+                            <p>Comece adicionando seu primeiro jogo!</p>
                             <div style="margin-top: 1rem;">
-                                <button onclick="openAddMangaModal()" style="margin-right: 1rem; padding: 0.75rem 1.5rem; background-color: var(--success-color); color: white; border: none; border-radius: 0.5rem; cursor: pointer;">
-                                    <i class="fas fa-plus"></i> Adicionar Mangá
+                                <button onclick="openAddjogosModal()" style="margin-right: 1rem; padding: 0.75rem 1.5rem; background-color: var(--success-color); color: white; border: none; border-radius: 0.5rem; cursor: pointer;">
+                                    <i class="fas fa-plus"></i> Adicionar Jogo
                                 </button>
                                 <a href="search-results.php" style="padding: 0.75rem 1.5rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 0.5rem; cursor: pointer; text-decoration: none; display: inline-block;">
-                                    <i class="fas fa-search"></i> Buscar Mangás
+                                    <i class="fas fa-search"></i> Buscar Jogos
                                 </a>
                             </div>
                         <?php endif; ?>
@@ -141,7 +141,7 @@
                 <?php else: ?>
                     
                     <!-- Sugestão para busca expandida -->
-                    <?php if (!empty($termo_pesquisa) && count($mangas_filtrados) < 5): ?>
+                    <?php if (!empty($termo_pesquisa) && count($jogos_filtrados) < 5): ?>
                         <div class="search-suggestion" style="background: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 0.5rem; padding: 1rem; margin-bottom: 2rem; text-align: center;">
                             <p style="margin-bottom: 1rem; color: var(--text-secondary);">
                                 <i class="fas fa-lightbulb"></i> Poucos resultados encontrados localmente
@@ -153,9 +153,9 @@
                         </div>
                     <?php endif; ?>
 
-                    <!-- List Header - Sempre visível quando há mangás -->
+                    <!-- List Header - Sempre visível quando há jogos -->
                     <div class="list-header" id="list-header">
-                        <div class="list-column" style="flex: 2;">Mangá</div>
+                        <div class="list-column" style="flex: 2;">Jogo</div>
                         <div class="list-column" style="width: auto; min-width: 100px;">Gênero</div>
                         <div class="list-column" style="width: 120px; flex-shrink: 0;">Status</div>
                         <div class="list-column" style="width: 100px; flex-shrink: 0;">Ações</div>
@@ -163,24 +163,24 @@
                     
                     <!-- List View -->
                     <div id="list-view" class="view-content">
-                        <?php foreach ($mangas_filtrados as $manga): ?>
-                        <div class="manga-item <?php echo !empty($manga['imported_from_api']) ? 'imported-from-api' : ''; ?>" data-manga-id="<?php echo $manga['id']; ?>">
-                            <!-- Mangá Info -->
-                            <div class="manga-info-compact">
-                                <div class="manga-cover-small">
+                        <?php foreach ($jogos_filtrados as $jogos): ?>
+                        <div class="jogos-item <?php echo !empty($jogos['imported_from_api']) ? 'imported-from-api' : ''; ?>" data-jogos-id="<?php echo $jogos['id']; ?>">
+                            <!-- Jogo Info -->
+                            <div class="jogos-info-compact">
+                                <div class="jogos-cover-small">
                                     <?php 
                                     $cover_url = '';
                                     $has_custom_cover = false;
                                     
                                     // Verificar se tem capa personalizada (primeiro verificar campo custom_cover)
-                                    if (!empty($manga['custom_cover']) && file_exists("covers/originals/{$manga['custom_cover']}")) {
-                                        $cover_url = "covers/originals/{$manga['custom_cover']}";
+                                    if (!empty($jogos['custom_cover']) && file_exists("covers/originals/{$jogos['custom_cover']}")) {
+                                        $cover_url = "covers/originals/{$jogos['custom_cover']}";
                                         $has_custom_cover = true;
-                                    } elseif (file_exists("covers/originals/{$manga['id']}.jpg") || file_exists("covers/originals/{$manga['id']}.png") || file_exists("covers/originals/{$manga['id']}.webp")) {
+                                    } elseif (file_exists("covers/originals/{$jogos['id']}.jpg") || file_exists("covers/originals/{$jogos['id']}.png") || file_exists("covers/originals/{$jogos['id']}.webp")) {
                                         $extensions = ['jpg', 'png', 'webp'];
                                         foreach ($extensions as $ext) {
-                                            if (file_exists("covers/originals/{$manga['id']}.{$ext}")) {
-                                                $cover_url = "covers/originals/{$manga['id']}.{$ext}";
+                                            if (file_exists("covers/originals/{$jogos['id']}.{$ext}")) {
+                                                $cover_url = "covers/originals/{$jogos['id']}.{$ext}";
                                                 $has_custom_cover = true;
                                                 break;
                                             }
@@ -188,42 +188,42 @@
                                     }
                                     
                                     // Se não tem capa personalizada, verificar dados da API
-                                    if (!$has_custom_cover && !empty($manga['api_data'])) {
-                                        if (isset($manga['api_data']['images']['jpg']['large_image_url'])) {
-                                            $cover_url = $manga['api_data']['images']['jpg']['large_image_url'];
-                                        } elseif (isset($manga['api_data']['images']['jpg']['image_url'])) {
-                                            $cover_url = $manga['api_data']['images']['jpg']['image_url'];
+                                    if (!$has_custom_cover && !empty($jogos['api_data'])) {
+                                        if (isset($jogos['api_data']['images']['jpg']['large_image_url'])) {
+                                            $cover_url = $jogos['api_data']['images']['jpg']['large_image_url'];
+                                        } elseif (isset($jogos['api_data']['images']['jpg']['image_url'])) {
+                                            $cover_url = $jogos['api_data']['images']['jpg']['image_url'];
                                         }
                                     }
                                     ?>
                                     
                                     <?php if (!empty($cover_url)): ?>
                                         <img src="<?php echo htmlspecialchars($cover_url); ?>" 
-                                             alt="Capa de <?php echo htmlspecialchars($manga['nome']); ?>"
+                                             alt="Capa de <?php echo htmlspecialchars($jogos['nome']); ?>"
                                              class="cover-image-small"
                                              onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                                     <?php endif; ?>
                                     
                                     <div class="cover-placeholder-small" <?php echo !empty($cover_url) ? 'style="display: none;"' : ''; ?>>
-                                        <i class="fas fa-book"></i>
+                                        <i class="fas fa-gamepad"></i>
                                     </div>
                                 </div>
                                 
-                                <div class="manga-text-compact">
-                                    <div class="manga-title-compact">
-                                        <?php echo htmlspecialchars($manga['nome']); ?>
-                                        <?php if (!empty($manga['imported_from_api'])): ?>
+                                <div class="jogos-text-compact">
+                                    <div class="jogos-title-compact">
+                                        <?php echo htmlspecialchars($jogos['nome']); ?>
+                                        <?php if (!empty($jogos['imported_from_api'])): ?>
                                             <span class="api-indicator">API</span>
                                         <?php endif; ?>
                                     </div>
-                                    <div class="manga-meta-compact">
-                                        <?php if (isset($manga['em_lancamento']) && $manga['em_lancamento']): ?>
+                                    <div class="jogos-meta-compact">
+                                        <?php if (isset($jogos['em_lancamento']) && $jogos['em_lancamento']): ?>
                                             <span><i class="fas fa-clock"></i> Em lançamento</span>
                                         <?php endif; ?>
-                                        <?php if ($manga['finalizado']): ?>
+                                        <?php if ($jogos['finalizado']): ?>
                                             <span>• <i class="fas fa-check-circle"></i> Finalizado</span>
                                         <?php endif; ?>
-                                        <span>• <i class="fas fa-calendar-alt"></i> Atualizado: <?php echo isset($manga['data_atualizacao']) ? date('d/m/Y', strtotime($manga['data_atualizacao'])) : date('d/m/Y', strtotime($manga['data_criacao'])); ?></span>
+                                        <span>• <i class="fas fa-calendar-alt"></i> Atualizado: <?php echo isset($jogos['data_atualizacao']) ? date('d/m/Y', strtotime($jogos['data_atualizacao'])) : date('d/m/Y', strtotime($jogos['data_criacao'])); ?></span>
                                     </div>
                                 </div>
                             </div>
@@ -232,25 +232,25 @@
                             <div class="genre-compact">
                                 <?php 
                                 // Compatibilidade com dados antigos (genero singular)
-                                if (isset($manga['genero']) && !isset($manga['generos'])) {
-                                    $manga['generos'] = !empty($manga['genero']) ? [$manga['genero']] : [];
+                                if (isset($jogos['genero']) && !isset($jogos['generos'])) {
+                                    $jogos['generos'] = !empty($jogos['genero']) ? [$jogos['genero']] : [];
                                 }
-                                echo formatGenres($manga['generos'] ?? []);
+                                echo formatGenres($jogos['generos'] ?? []);
                                 ?>
                             </div>
                             
                             <!-- Status -->
-                            <div class="status-compact status-<?php echo $manga['status']; ?>">
-                                <?php echo getStatusText($manga['status']); ?>
+                            <div class="status-compact status-<?php echo $jogos['status']; ?>">
+                                <?php echo getStatusText($jogos['status']); ?>
                             </div>
                             
                             
                             <!-- Ações -->
                             <div class="actions-compact" style="width: 100px;">
-                                <button class="btn btn-edit" onclick="openEditModal('<?php echo $manga['id']; ?>')" title="Editar">
+                                <button class="btn btn-edit" onclick="openEditModal('<?php echo $jogos['id']; ?>')" title="Editar">
                                     <i class="fas fa-edit"></i>
                                 </button>
-                                <button class="btn btn-delete" onclick="openDeleteModal('<?php echo $manga['id']; ?>', '<?php echo htmlspecialchars($manga['nome']); ?>')" title="Excluir">
+                                <button class="btn btn-delete" onclick="openDeleteModal('<?php echo $jogos['id']; ?>', '<?php echo htmlspecialchars($jogos['nome']); ?>')" title="Excluir">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </div>
@@ -261,23 +261,23 @@
                     <!-- Cards View -->
                     <div id="cards-view" class="view-content">
                         <div class="cards-grid">
-                            <?php foreach ($mangas_filtrados as $manga): ?>
-                                <div class="manga-block <?php echo !empty($manga['imported_from_api']) ? 'imported-from-api' : ''; ?>" data-manga-id="<?php echo $manga['id']; ?>">
-                                    <!-- Capa do Mangá -->
-                                    <div class="manga-cover">
+                            <?php foreach ($jogos_filtrados as $jogos): ?>
+                                <div class="jogos-block <?php echo !empty($jogos['imported_from_api']) ? 'imported-from-api' : ''; ?>" data-jogos-id="<?php echo $jogos['id']; ?>">
+                                    <!-- Capa do Jogo -->
+                                    <div class="jogos-cover">
                                         <?php 
                                         $cover_url = '';
                                         $has_custom_cover = false;
                                         
                                         // Verificar se tem capa personalizada (primeiro verificar campo custom_cover)
-                                        if (!empty($manga['custom_cover']) && file_exists("covers/originals/{$manga['custom_cover']}")) {
-                                            $cover_url = "covers/originals/{$manga['custom_cover']}";
+                                        if (!empty($jogos['custom_cover']) && file_exists("covers/originals/{$jogos['custom_cover']}")) {
+                                            $cover_url = "covers/originals/{$jogos['custom_cover']}";
                                             $has_custom_cover = true;
-                                        } elseif (file_exists("covers/originals/{$manga['id']}.jpg") || file_exists("covers/originals/{$manga['id']}.png") || file_exists("covers/originals/{$manga['id']}.webp")) {
+                                        } elseif (file_exists("covers/originals/{$jogos['id']}.jpg") || file_exists("covers/originals/{$jogos['id']}.png") || file_exists("covers/originals/{$jogos['id']}.webp")) {
                                             $extensions = ['jpg', 'png', 'webp'];
                                             foreach ($extensions as $ext) {
-                                                if (file_exists("covers/originals/{$manga['id']}.{$ext}")) {
-                                                    $cover_url = "covers/originals/{$manga['id']}.{$ext}";
+                                                if (file_exists("covers/originals/{$jogos['id']}.{$ext}")) {
+                                                    $cover_url = "covers/originals/{$jogos['id']}.{$ext}";
                                                     $has_custom_cover = true;
                                                     break;
                                                 }
@@ -285,30 +285,30 @@
                                         }
                                         
                                         // Se não tem capa personalizada, verificar dados da API
-                                        if (!$has_custom_cover && !empty($manga['api_data'])) {
-                                            if (isset($manga['api_data']['images']['jpg']['large_image_url'])) {
-                                                $cover_url = $manga['api_data']['images']['jpg']['large_image_url'];
-                                            } elseif (isset($manga['api_data']['images']['jpg']['image_url'])) {
-                                                $cover_url = $manga['api_data']['images']['jpg']['image_url'];
+                                        if (!$has_custom_cover && !empty($jogos['api_data'])) {
+                                            if (isset($jogos['api_data']['images']['jpg']['large_image_url'])) {
+                                                $cover_url = $jogos['api_data']['images']['jpg']['large_image_url'];
+                                            } elseif (isset($jogos['api_data']['images']['jpg']['image_url'])) {
+                                                $cover_url = $jogos['api_data']['images']['jpg']['image_url'];
                                             }
                                         }
                                         ?>
                                         
                                         <?php if (!empty($cover_url)): ?>
                                             <img src="<?php echo htmlspecialchars($cover_url); ?>" 
-                                                 alt="Capa de <?php echo htmlspecialchars($manga['nome']); ?>"
+                                                 alt="Capa de <?php echo htmlspecialchars($jogos['nome']); ?>"
                                                  class="cover-image"
                                                  onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                                         <?php endif; ?>
                                         
                                         <!-- Placeholder quando não há capa -->
                                         <div class="cover-placeholder" <?php echo !empty($cover_url) ? 'style="display: none;"' : ''; ?>>
-                                            <i class="fas fa-book"></i>
+                                            <i class="fas fa-gamepad"></i>
                                             <span>Sem Capa</span>
                                         </div>
                                         
                                         <!-- Indicador API -->
-                                        <?php if (!empty($manga['imported_from_api'])): ?>
+                                        <?php if (!empty($jogos['imported_from_api'])): ?>
                                             <div class="api-badge">
                                                 <i class="fas fa-cloud-download-alt"></i>
                                             </div>
@@ -317,23 +317,23 @@
                                     
                                     <div class="block-content">
                                         <div class="block-header">
-                                            <h4 class="block-title" title="<?php echo htmlspecialchars($manga['nome']); ?>">
-                                                <?php echo htmlspecialchars($manga['nome']); ?>
+                                            <h4 class="block-title" title="<?php echo htmlspecialchars($jogos['nome']); ?>">
+                                                <?php echo htmlspecialchars($jogos['nome']); ?>
                                             </h4>
                                         </div>
                                         
                                         <div class="block-details">
                                             <span class="detail-item">
                                                 <i class="fas fa-bookmark"></i> 
-                                                <?php echo getStatusText($manga['status']); ?>
+                                                <?php echo getStatusText($jogos['status']); ?>
                                             </span>
-                                            <?php if (isset($manga['em_lancamento']) && $manga['em_lancamento']): ?>
+                                            <?php if (isset($jogos['em_lancamento']) && $jogos['em_lancamento']): ?>
                                                 <span class="detail-item">
                                                     <i class="fas fa-clock"></i> Em lançamento
                                                 </span>
                                             <?php endif; ?>
                                             
-                                            <?php if ($manga['finalizado']): ?>
+                                            <?php if ($jogos['finalizado']): ?>
                                                 <span class="detail-item">
                                                     <i class="fas fa-check-circle"></i> Finalizado
                                                 </span>
@@ -341,7 +341,7 @@
                                             
                                             <span class="detail-item">
                                                 <i class="fas fa-calendar-alt"></i> 
-                                                Atualizado: <?php echo isset($manga['data_atualizacao']) ? date('d/m/Y', strtotime($manga['data_atualizacao'])) : date('d/m/Y', strtotime($manga['data_criacao'])); ?>
+                                                Atualizado: <?php echo isset($jogos['data_atualizacao']) ? date('d/m/Y', strtotime($jogos['data_atualizacao'])) : date('d/m/Y', strtotime($jogos['data_criacao'])); ?>
                                             </span>
                                         </div>
                                         
@@ -349,19 +349,19 @@
                                         <div class="block-genres">
                                             <?php 
                                             // Compatibilidade com dados antigos (genero singular)
-                                            if (isset($manga['genero']) && !isset($manga['generos'])) {
-                                                $manga['generos'] = !empty($manga['genero']) ? [$manga['genero']] : [];
+                                            if (isset($jogos['genero']) && !isset($jogos['generos'])) {
+                                                $jogos['generos'] = !empty($jogos['genero']) ? [$jogos['genero']] : [];
                                             }
-                                            echo formatGenres($manga['generos'] ?? []);
+                                            echo formatGenres($jogos['generos'] ?? []);
                                             ?>
                                         </div>
                                     </div>
                                     
                                     <div class="block-actions">
-                                        <button class="btn btn-edit" onclick="openEditModal('<?php echo $manga['id']; ?>')" title="Editar">
+                                        <button class="btn btn-edit" onclick="openEditModal('<?php echo $jogos['id']; ?>')" title="Editar">
                                             <i class="fas fa-edit"></i>
                                         </button>
-                                        <button class="btn btn-delete" onclick="openDeleteModal('<?php echo $manga['id']; ?>', '<?php echo htmlspecialchars($manga['nome']); ?>')" title="Excluir">
+                                        <button class="btn btn-delete" onclick="openDeleteModal('<?php echo $jogos['id']; ?>', '<?php echo htmlspecialchars($jogos['nome']); ?>')" title="Excluir">
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     </div>
@@ -382,14 +382,14 @@
                 <button class="close-btn" onclick="closeDeleteModal()">&times;</button>
             </div>
             <div class="modal-body">
-                <p>Tem certeza que deseja excluir o mangá "<span id="deleteMangaName"></span>"?</p>
+                <p>Tem certeza que deseja excluir o jogo "<span id="deletejogosName"></span>"?</p>
                 <p class="warning-text">Esta ação não pode ser desfeita.</p>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" onclick="closeDeleteModal()">Cancelar</button>
                 <form method="POST" id="deleteForm" style="display: inline;">
                     <input type="hidden" name="action" value="delete">
-                    <input type="hidden" name="id" id="deleteMangaId">
+                    <input type="hidden" name="id" id="deletejogosId">
                     <button type="submit" class="btn btn-delete">
                         <i class="fas fa-trash"></i> Excluir
                     </button>
@@ -398,14 +398,14 @@
         </div>
     </div>
 
-    <!-- Add Manga Modal -->
-    <div id="addMangaModal" class="modal">
+    <!-- Add jogos Modal -->
+    <div id="addjogosModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="modal-title">Adicionar Novo Mangá</h3>
-                <button class="close-btn" onclick="closeAddMangaModal()">&times;</button>
+                <h3 class="modal-title">Adicionar Novo Jogo</h3>
+                <button class="close-btn" onclick="closeAddjogosModal()">&times;</button>
             </div>
-            <form method="POST" id="addMangaForm" enctype="multipart/form-data">
+            <form method="POST" id="addjogosForm" enctype="multipart/form-data">
                 <input type="hidden" name="action" value="add">
                 
                 <div class="modal-form-layout">
@@ -427,17 +427,17 @@
                     <!-- Lado Direito - Campos -->
                     <div class="modal-right">
                         <div class="form-group">
-                            <label class="form-label">Nome do Mangá *</label>
+                            <label class="form-label">Nome do Jogo *</label>
                             <input type="text" name="nome" id="addNome" class="form-input" required>
                         </div>
                         
                         <div class="form-group">
-                            <label class="form-label">Total de Capítulos</label>
+                            <label class="form-label">Total de Fases/Níveis</label>
                             <input type="number" name="capitulos_total" id="addCapitulosTotal" class="form-input" min="0" value="0">
                         </div>
                         
                         <div class="form-group">
-                            <label class="form-label">Capítulo Atual</label>
+                            <label class="form-label">Fase/Nível Atual</label>
                             <input type="number" name="capitulo_atual" id="addCapituloAtual" class="form-input" min="0" value="0">
                         </div>
                         
@@ -445,8 +445,8 @@
                             <label class="form-label">Status *</label>
                             <select name="status" id="addStatus" class="form-select" required onchange="toggleRequiredFields()">
                                 <option value="">Selecione...</option>
-                                <option value="lendo">Lendo</option>
-                                <option value="pretendo">Pretendo Ler</option>
+                                <option value="jogando">Jogando</option>
+                                <option value="pretendo">Pretendo Jogar</option>
                                 <option value="abandonado">Abandonado</option>
                                 <option value="completado">Completado</option>
                             </select>
@@ -521,11 +521,11 @@
                         <div class="checkbox-row">
                             <div class="checkbox-group">
                                 <input type="checkbox" name="em_lancamento" id="addEmLancamento" class="form-checkbox" onchange="handleEmLancamentoChange(this)">
-                                <span>Mangá em lançamento</span>
+                                <span>Jogo em lançamento</span>
                         </div>
                             <div class="checkbox-group">
                                 <input type="checkbox" name="finalizado" id="addFinalizado" class="form-checkbox" onchange="handleFinalizadoChange(this)">
-                                <span>Mangá finalizado</span>
+                                <span>Jogo finalizado</span>
                             </div>
                         </div>
                     </div>
@@ -544,7 +544,7 @@
     <div id="editModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="modal-title">Editar Mangá</h3>
+                <h3 class="modal-title">Editar Jogo</h3>
                 <button class="close-btn" onclick="closeEditModal()">&times;</button>
             </div>
             <form method="POST" id="editForm" enctype="multipart/form-data">
@@ -569,25 +569,25 @@
                     <!-- Lado Direito - Campos -->
                     <div class="modal-right">
                     <div class="form-group">
-                        <label class="form-label">Nome do Mangá *</label>
+                        <label class="form-label">Nome do Jogo *</label>
                         <input type="text" name="nome" id="editNome" class="form-input" required>
                     </div>
                         
                         <div class="form-group">
-                            <label class="form-label">Total de Capítulos</label>
+                            <label class="form-label">Total de Fases/Níveis</label>
                             <input type="number" name="capitulos_total" id="editCapitulosTotal" class="form-input" min="0" value="0">
                         </div>
                         
                         <div class="form-group">
-                            <label class="form-label">Capítulo Atual</label>
+                            <label class="form-label">Fase/Nível Atual</label>
                             <input type="number" name="capitulo_atual" id="editCapituloAtual" class="form-input" min="0" value="0">
                         </div>
                         
                         <div class="form-group">
                             <label class="form-label">Status *</label>
                             <select name="status" id="editStatus" class="form-select" required onchange="toggleEditRequiredFields()">
-                                <option value="lendo">Lendo</option>
-                                <option value="pretendo">Pretendo Ler</option>
+                                <option value="jogando">Jogando</option>
+                                <option value="pretendo">Pretendo Jogar</option>
                                 <option value="abandonado">Abandonado</option>
                                 <option value="completado">Completado</option>
                             </select>
@@ -661,11 +661,11 @@
                         <div class="checkbox-row">
                             <div class="checkbox-group">
                                 <input type="checkbox" name="em_lancamento" id="editEmLancamento" class="form-checkbox" onchange="handleEditEmLancamentoChange(this)">
-                                <span>Mangá em lançamento</span>
+                                <span>Jogo em lançamento</span>
                         </div>
                             <div class="checkbox-group">
                                 <input type="checkbox" name="finalizado" id="editFinalizado" class="form-checkbox" onchange="handleEditFinalizadoChange(this)">
-                                <span>Mangá finalizado</span>
+                                <span>Jogo finalizado</span>
                             </div>
                         </div>
                     </div>
@@ -680,8 +680,8 @@
     </div>
 
     <script>
-        // Make manga data available globally for JavaScript
-        window.mangaData = <?php echo json_encode($_SESSION['mangas']); ?>;
+        // Make jogos data available globally for JavaScript
+        window.jogosData = <?php echo json_encode($_SESSION['jogos']); ?>;
         
         // Sistema de busca integrada com API
         let buscaTimeout;
@@ -731,10 +731,10 @@
             // Adicionar placeholder dinâmico
             if (searchInput) {
                 const placeholders = [
-                    'Pesquisar mangás...',
-                    'Ex: One Piece, Naruto...',
+                    'Pesquisar jogos...',
+                    'Ex: The Witcher, GTA...',
                     'Buscar na sua lista...',
-                    'Encontrar mangás...'
+                    'Encontrar jogos...'
                 ];
                 
                 let currentPlaceholder = 0;
@@ -749,7 +749,7 @@
         
         // Adicionar estilos dinâmicos para melhor UX
         const additionalStyles = `
-            .api-manga-card:hover {
+            .api-jogos-card:hover {
                 transform: translateY(-2px);
                 box-shadow: 0 4px 12px rgba(0,0,0,0.1);
                 border-color: #667eea;

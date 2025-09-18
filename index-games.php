@@ -6,7 +6,7 @@ session_start();
 require_once 'init-api.php';
 
 // Função para upload de capas
-function uploadCover($file, $manga_id) {
+function uploadCover($file, $jogos_id) {
     $upload_dir = 'covers/originals/';
     
     // Criar diretório se não existir
@@ -41,13 +41,13 @@ function uploadCover($file, $manga_id) {
     }
     
     // Remover capas antigas do mesmo mangá
-    $old_files = glob($upload_dir . $manga_id . '.*');
+    $old_files = glob($upload_dir . $jogos_id . '.*');
     foreach ($old_files as $old_file) {
         unlink($old_file);
     }
     
     // Nome do arquivo
-    $filename = $manga_id . '.' . $extension;
+    $filename = $jogos_id . '.' . $extension;
     $filepath = $upload_dir . $filename;
     
     // Mover arquivo
@@ -59,8 +59,8 @@ function uploadCover($file, $manga_id) {
 }
 
 // Inicializar array de mangás se não existir
-if (!isset($_SESSION['mangas'])) {
-    $_SESSION['mangas'] = [];
+if (!isset($_SESSION['jogos'])) {
+    $_SESSION['jogos'] = [];
 }
 
 // Inicializar tema se não existir
@@ -80,14 +80,14 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') 
                     
                     // Set total chapters based on em_lancamento status
                     if ($em_lancamento) {
-                        $_POST['capitulos_total'] = 0; // Set to 0 for ongoing manga
+                        $_POST['capitulos_total'] = 0; // Set to 0 for ongoing jogos
                     } elseif (empty($_POST['capitulos_total'])) {
                         $_POST['capitulos_total'] = 0; // Default value if not set
                     }
                     
                     // Set current chapter based on status
                     if ($status === 'completado' && !empty($_POST['capitulos_total'])) {
-                        $_POST['capitulo_atual'] = $_POST['capitulos_total']; // Set to total for completed manga
+                        $_POST['capitulo_atual'] = $_POST['capitulos_total']; // Set to total for completed jogos
                     } elseif (empty($_POST['capitulo_atual'])) {
                         $_POST['capitulo_atual'] = 0; // Default value if not set
                     }
@@ -102,10 +102,10 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') 
                         }
                     }
                     
-                    $manga_id = uniqid();
+                    $jogos_id = uniqid();
                     
-                    $manga = [
-                        'id' => $manga_id,
+                    $jogos = [
+                        'id' => $jogos_id,
                         'nome' => $_POST['nome'],
                         'status' => $_POST['status'],
                         'capitulos_total' => (int)$_POST['capitulos_total'],
@@ -121,44 +121,44 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') 
                     
                     // Processar upload de capa
                     if (isset($_FILES['cover_image']) && $_FILES['cover_image']['error'] === UPLOAD_ERR_OK) {
-                        $upload_result = uploadCover($_FILES['cover_image'], $manga_id);
+                        $upload_result = uploadCover($_FILES['cover_image'], $jogos_id);
                         if ($upload_result['success']) {
-                            $manga['custom_cover'] = $upload_result['filename'];
+                            $jogos['custom_cover'] = $upload_result['filename'];
                         }
                     }
                     
-                    $_SESSION['mangas'][] = $manga;
+                    $_SESSION['jogos'][] = $jogos;
                 }
                 break;
                 
             case 'edit':
                 if (isset($_POST['id']) && !empty($_POST['nome'])) {
-                    foreach ($_SESSION['mangas'] as &$manga) {
-                        if ($manga['id'] === $_POST['id']) {
-                            $manga['nome'] = $_POST['nome'];
-                            $manga['status'] = $_POST['status'];
-                            $manga['capitulos_total'] = (int)$_POST['capitulos_total'];
-                            $manga['finalizado'] = isset($_POST['finalizado']) ? true : false;
-                            $manga['capitulo_atual'] = (int)$_POST['capitulo_atual'];
-                            $manga['em_lancamento'] = isset($_POST['em_lancamento']) ? true : false;
-                            $manga['generos'] = !empty($_POST['generos']) ? $_POST['generos'] : [];
-                            $manga['data_atualizacao'] = date('Y-m-d H:i:s');
+                    foreach ($_SESSION['jogos'] as &$jogos) {
+                        if ($jogos['id'] === $_POST['id']) {
+                            $jogos['nome'] = $_POST['nome'];
+                            $jogos['status'] = $_POST['status'];
+                            $jogos['capitulos_total'] = (int)$_POST['capitulos_total'];
+                            $jogos['finalizado'] = isset($_POST['finalizado']) ? true : false;
+                            $jogos['capitulo_atual'] = (int)$_POST['capitulo_atual'];
+                            $jogos['em_lancamento'] = isset($_POST['em_lancamento']) ? true : false;
+                            $jogos['generos'] = !empty($_POST['generos']) ? $_POST['generos'] : [];
+                            $jogos['data_atualizacao'] = date('Y-m-d H:i:s');
                             
                             // Set total chapters based on em_lancamento status
-                            if ($manga['em_lancamento']) {
-                                $manga['capitulos_total'] = 0;
+                            if ($jogos['em_lancamento']) {
+                                $jogos['capitulos_total'] = 0;
                             }
                             
                             // Set current chapter based on status
-                            if ($manga['status'] === 'completado' && $manga['capitulos_total'] > 0) {
-                                $manga['capitulo_atual'] = $manga['capitulos_total'];
+                            if ($jogos['status'] === 'completado' && $jogos['capitulos_total'] > 0) {
+                                $jogos['capitulo_atual'] = $jogos['capitulos_total'];
                             }
                             
                             // Processar upload de nova capa
                             if (isset($_FILES['cover_image']) && $_FILES['cover_image']['error'] === UPLOAD_ERR_OK) {
-                                $upload_result = uploadCover($_FILES['cover_image'], $manga['id']);
+                                $upload_result = uploadCover($_FILES['cover_image'], $jogos['id']);
                                 if ($upload_result['success']) {
-                                    $manga['custom_cover'] = $upload_result['filename'];
+                                    $jogos['custom_cover'] = $upload_result['filename'];
                                 }
                             }
                             
@@ -170,8 +170,8 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') 
                 
             case 'delete':
                 if (isset($_POST['id'])) {
-                    $_SESSION['mangas'] = array_filter($_SESSION['mangas'], function($manga) {
-                        return $manga['id'] !== $_POST['id'];
+                    $_SESSION['jogos'] = array_filter($_SESSION['jogos'], function($jogos) {
+                        return $jogos['id'] !== $_POST['id'];
                     });
                 }
                 break;
@@ -185,41 +185,41 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') 
                 // Debug: verificar dados recebidos
                 error_log('Update order - POST data: ' . print_r($_POST, true));
                 
-                if (isset($_POST['manga_order'])) {
+                if (isset($_POST['jogos_order'])) {
                     try {
                         // Decodificar JSON se necessário
-                        $mangaOrder = $_POST['manga_order'];
-                        if (is_string($mangaOrder)) {
-                            $mangaOrder = json_decode($mangaOrder, true);
+                        $jogosOrder = $_POST['jogos_order'];
+                        if (is_string($jogosOrder)) {
+                            $jogosOrder = json_decode($jogosOrder, true);
                         }
                         
                         // Debug: verificar ordem decodificada
-                        error_log('Manga order decoded: ' . print_r($mangaOrder, true));
+                        error_log('jogos order decoded: ' . print_r($jogosOrder, true));
                         
-                        if (!is_array($mangaOrder) || empty($mangaOrder)) {
+                        if (!is_array($jogosOrder) || empty($jogosOrder)) {
                             echo json_encode(['success' => false, 'message' => 'Array de ordem inválido']);
                             exit;
                         }
                         
-                        // Reordenar mangás na sessão
-                        $reorderedMangas = [];
-                        foreach ($mangaOrder as $mangaId) {
-                            foreach ($_SESSION['mangas'] as $manga) {
-                                if ($manga['id'] === $mangaId) {
-                                    $reorderedMangas[] = $manga;
+                        // Reordenar jogos na sessão
+                        $reorderedJogos = [];
+                        foreach ($jogosOrder as $jogosId) {
+                            foreach ($_SESSION['jogos'] as $jogos) {
+                                if ($jogos['id'] === $jogosId) {
+                                    $reorderedJogos[] = $jogos;
                                     break;
                                 }
                             }
                         }
                         
-                        // Verificar se todos os mangás foram encontrados
-                        if (count($reorderedMangas) !== count($mangaOrder)) {
-                            echo json_encode(['success' => false, 'message' => 'Alguns mangás não foram encontrados']);
+                        // Verificar se todos os jogos foram encontrados
+                        if (count($reorderedJogos) !== count($jogosOrder)) {
+                            echo json_encode(['success' => false, 'message' => 'Alguns jogos não foram encontrados']);
                             exit;
                         }
                         
                         // Atualizar sessão
-                        $_SESSION['mangas'] = $reorderedMangas;
+                        $_SESSION['jogos'] = $reorderedJogos;
                         
                         echo json_encode(['success' => true, 'message' => 'Ordem atualizada com sucesso']);
                     } catch (Exception $e) {
@@ -227,7 +227,7 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') 
                         echo json_encode(['success' => false, 'message' => 'Erro: ' . $e->getMessage()]);
                     }
                 } else {
-                    echo json_encode(['success' => false, 'message' => 'Dados inválidos - manga_order não encontrado']);
+                    echo json_encode(['success' => false, 'message' => 'Dados inválidos - game_order não encontrado']);
                 }
                 exit;
         }
@@ -238,24 +238,24 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') 
     }
 }
 
-// Filtrar mangás por pesquisa
+// Filtrar jogos por pesquisa
 $termo_pesquisa = isset($_GET['search']) ? trim($_GET['search']) : '';
-$mangas_filtrados = $_SESSION['mangas'];
+$jogos_filtrados = $_SESSION['jogos'];
 $resultados_api = []; // Initialize API results array
 
 if (!empty($termo_pesquisa)) {
     // Busca apenas local
-    $mangas_filtrados = array_filter($_SESSION['mangas'], function($manga) use ($termo_pesquisa) {
-        return stripos($manga['nome'], $termo_pesquisa) !== false ||
-               (isset($manga['comentario']) && stripos($manga['comentario'], $termo_pesquisa) !== false);
+    $jogos_filtrados = array_filter($_SESSION['jogos'], function($jogos) use ($termo_pesquisa) {
+        return stripos($jogos['nome'], $termo_pesquisa) !== false ||
+               (isset($jogos['comentario']) && stripos($jogos['comentario'], $termo_pesquisa) !== false);
     });
 }
 
 // Função para converter status para texto completo
 function getStatusText($status) {
     $statusMap = [
-        'lendo' => 'Lendo',
-        'pretendo' => 'Pretendo Ler',
+        'jogando' => 'Jogando',
+        'pretendo' => 'Pretendo Jogar',
         'abandonado' => 'Abandonado',
         'completado' => 'Completado'
     ];
@@ -282,11 +282,11 @@ function formatGenres($generos) {
 }
 
 // Calcular métricas
-$total_mangas = count($_SESSION['mangas']);
-$mangas_lendo = count(array_filter($_SESSION['mangas'], fn($m) => $m['status'] === 'lendo'));
-$mangas_pretendo = count(array_filter($_SESSION['mangas'], fn($m) => $m['status'] === 'pretendo'));
-$mangas_abandonados = count(array_filter($_SESSION['mangas'], fn($m) => $m['status'] === 'abandonado'));
-$mangas_finalizados = count(array_filter($_SESSION['mangas'], fn($m) => $m['finalizado']));
+$total_jogos = count($_SESSION['jogos']);
+$jogos_jogando = count(array_filter($_SESSION['jogos'], fn($m) => $m['status'] === 'jogando'));
+$jogos_pretendo = count(array_filter($_SESSION['jogos'], fn($m) => $m['status'] === 'pretendo'));
+$jogos_abandonados = count(array_filter($_SESSION['jogos'], fn($m) => $m['status'] === 'abandonado'));
+$jogos_finalizados = count(array_filter($_SESSION['jogos'], fn($m) => $m['finalizado']));
 
 // Incluir o template PHP
 include 'template-games.php';

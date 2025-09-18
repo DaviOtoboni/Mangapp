@@ -52,10 +52,10 @@ function switchView(viewMode) {
             targetView.style.display = 'block';
             
             // Verificar se há conteúdo dentro da view
-            const mangaBlocks = targetView.querySelectorAll('.manga-block');
+            const jogosBlocks = targetView.querySelectorAll('.jogos-block');
             const cardsGrid = targetView.querySelector('.cards-grid');
             
-            console.log('Mangás encontrados na view:', mangaBlocks.length);
+            console.log('Jogos encontrados na view:', jogosBlocks.length);
             console.log('Cards grid encontrado:', cardsGrid ? 'SIM' : 'NÃO');
             
             if (cardsGrid) {
@@ -67,7 +67,7 @@ function switchView(viewMode) {
                 // Removido para evitar conflitos
             }
             
-            if (mangaBlocks.length === 0 && viewMode === 'cards') {
+            if (jogosBlocks.length === 0 && viewMode === 'cards') {
                 console.warn('⚠️ NENHUM MANGÁ ENCONTRADO NA VIEW CARDS!');
                 console.log('Estrutura da view:', targetView.innerHTML.substring(0, 1000));
                 
@@ -77,9 +77,9 @@ function switchView(viewMode) {
                 hiddenElements.forEach(el => {
                     console.log('Elemento oculto:', el.tagName, el.className, el.style.cssText);
                 });
-            } else if (mangaBlocks.length > 0) {
-                console.log('✅ Mangás encontrados na view cards, forçando visibilidade...');
-                mangaBlocks.forEach((block, index) => {
+            } else if (jogosBlocks.length > 0) {
+                console.log('✅ Jogos encontrados na view cards, forçando visibilidade...');
+                jogosBlocks.forEach((block, index) => {
                     // Não aplicar display: block nos cards, deixar o CSS gerenciar
                     block.style.visibility = 'visible';
                     console.log(`Bloco ${index + 1}:`, block.style.cssText);
@@ -123,15 +123,15 @@ function switchView(viewMode) {
 }
 
 // Delete confirmation modal functions
-function openDeleteModal(mangaId, mangaName) {
+function openDeleteModal(jogosId, jogosName) {
     errorHandler.safeExecute(() => {
         const modal = errorHandler.validateElement('deleteModal', 'Open Delete Modal');
-        const idField = errorHandler.validateElement('deleteMangaId', 'Delete Modal ID Field');
-        const nameField = errorHandler.validateElement('deleteMangaName', 'Delete Modal Name Field');
+        const idField = errorHandler.validateElement('deletejogosId', 'Delete Modal ID Field');
+        const nameField = errorHandler.validateElement('deletejogosName', 'Delete Modal Name Field');
         
         if (modal && idField && nameField) {
-            idField.value = mangaId;
-            nameField.textContent = mangaName;
+            idField.value = jogosId;
+            nameField.textContent = jogosName;
             modal.classList.add('show');
         }
     }, 'openDeleteModal');
@@ -146,15 +146,18 @@ function closeDeleteModal() {
     }, 'closeDeleteModal');
 }
 
-// Add Manga Modal functions
-function openAddMangaModal() {
+// Add Jogos Modal functions
+function openAddjogosModal() {
+    console.log('🎮 openAddjogosModal() chamada');
     errorHandler.safeExecute(() => {
-        const modal = errorHandler.validateElement('addMangaModal', 'Open Add Modal');
+        const modal = errorHandler.validateElement('addjogosModal', 'Open Add Modal');
+        console.log('🎮 Modal encontrado:', modal);
         if (modal) {
             modal.classList.add('show');
+            console.log('🎮 Modal classList após adicionar show:', modal.classList.toString());
             
             // Reset form fields
-            const form = document.getElementById('addMangaForm');
+            const form = document.getElementById('addjogosForm');
             if (form) {
                 form.reset();
             }
@@ -174,16 +177,16 @@ function openAddMangaModal() {
             // Reset required fields when opening modal
             toggleRequiredFields();
         }
-    }, 'openAddMangaModal');
+    }, 'openAddjogosModal');
 }
 
-function closeAddMangaModal() {
+function closeAddjogosModal() {
     errorHandler.safeExecute(() => {
-        const modal = errorHandler.validateElement('addMangaModal', 'Close Add Modal');
+        const modal = errorHandler.validateElement('addjogosModal', 'Close Add Modal');
         if (modal) {
             modal.classList.remove('show');
         }
-    }, 'closeAddMangaModal');
+    }, 'closeAddjogosModal');
 }
 
 // Modal Validation System
@@ -422,7 +425,7 @@ function toggleEditRequiredFields() {
 }
 
 // Edit modal functions
-function openEditModal(mangaId) {
+function openEditModal(jogosId) {
     try {
         const modal = document.getElementById('editModal');
         if (!modal) {
@@ -430,20 +433,20 @@ function openEditModal(mangaId) {
             return;
         }
         
-        const mangas = window.mangaData || []; // Get manga data from global variable
-        const manga = mangas.find(m => m.id === mangaId);
+        const jogos = window.jogosData || []; // Get jogos data from global variable
+        const jogo = jogos.find(j => j.id === jogosId);
         
-        if (!manga) {
-            console.error('Mangá não encontrado:', mangaId);
+        if (!jogo) {
+            console.error('Jogo não encontrado:', jogosId);
             return;
         }
         
         // Populate form fields with validation
-        modalValidator.validateElement('editId', el => el.value = manga.id);
-        modalValidator.validateElement('editNome', el => el.value = manga.nome);
-        modalValidator.validateElement('editStatus', el => el.value = manga.status);
-        modalValidator.validateElement('editCapitulosTotal', el => el.value = manga.capitulos_total);
-        modalValidator.validateElement('editCapituloAtual', el => el.value = manga.capitulo_atual);
+        modalValidator.validateElement('editId', el => el.value = jogo.id);
+        modalValidator.validateElement('editNome', el => el.value = jogo.nome);
+        modalValidator.validateElement('editStatus', el => el.value = jogo.status);
+        modalValidator.validateElement('editCapitulosTotal', el => el.value = jogo.capitulos_total);
+        modalValidator.validateElement('editCapituloAtual', el => el.value = jogo.capitulo_atual);
         // Preencher gêneros múltiplos (checkboxes)
         const editGenerosCheckboxes = document.querySelectorAll('#editModal input[name="generos[]"]');
         if (editGenerosCheckboxes.length > 0) {
@@ -452,8 +455,8 @@ function openEditModal(mangaId) {
                 checkbox.checked = false;
             });
             
-            // Selecionar gêneros do mangá
-            const generos = manga.generos || [];
+            // Selecionar gêneros do jogo
+            const generos = jogo.generos || [];
             if (Array.isArray(generos)) {
                 generos.forEach(genero => {
                     const checkbox = Array.from(editGenerosCheckboxes).find(cb => cb.value === genero);
@@ -463,8 +466,8 @@ function openEditModal(mangaId) {
                 });
             }
         }
-        modalValidator.validateElement('editFinalizado', el => el.checked = manga.finalizado);
-        modalValidator.validateElement('editEmLancamento', el => el.checked = manga.em_lancamento || false);
+        modalValidator.validateElement('editFinalizado', el => el.checked = jogo.finalizado);
+        modalValidator.validateElement('editEmLancamento', el => el.checked = jogo.em_lancamento || false);
         // Configurar preview da capa
         const editCoverPreview = document.getElementById('editCoverPreview');
         if (editCoverPreview) {
@@ -472,9 +475,9 @@ function openEditModal(mangaId) {
             let hasCover = false;
             
             // Função para testar extensões sequencialmente
-            const testImageExtensions = async (extensions, mangaId) => {
+            const testImageExtensions = async (extensions, jogosId) => {
                 for (const ext of extensions) {
-                    const testUrl = `covers/originals/${mangaId}.${ext}`;
+                    const testUrl = `covers/originals/${jogosId}.${ext}`;
                     try {
                         const response = await fetch(testUrl, { method: 'HEAD' });
                         if (response.ok) {
@@ -490,14 +493,14 @@ function openEditModal(mangaId) {
             
             // Verificar se tem capa personalizada
             const extensions = ['jpg', 'png', 'webp'];
-            testImageExtensions(extensions, manga.id).then(found => {
+            testImageExtensions(extensions, jogo.id).then(found => {
                 if (!found) {
                     // Se não tem capa personalizada, verificar dados da API
-                    if (manga.api_data && manga.api_data.images) {
-                        if (manga.api_data.images.jpg && manga.api_data.images.jpg.large_image_url) {
-                            coverUrl = manga.api_data.images.jpg.large_image_url;
-                        } else if (manga.api_data.images.jpg && manga.api_data.images.jpg.image_url) {
-                            coverUrl = manga.api_data.images.jpg.image_url;
+                    if (jogo.api_data && jogo.api_data.images) {
+                        if (jogo.api_data.images.jpg && jogo.api_data.images.jpg.large_image_url) {
+                            coverUrl = jogo.api_data.images.jpg.large_image_url;
+                        } else if (jogo.api_data.images.jpg && jogo.api_data.images.jpg.image_url) {
+                            coverUrl = jogo.api_data.images.jpg.image_url;
                         }
                         
                         if (coverUrl) {
@@ -542,11 +545,11 @@ function closeEditModal() {
 
 // Close modal when clicking outside
 window.onclick = function(event) {
-    const addMangaModal = document.getElementById('addMangaModal');
+    const addjogosModal = document.getElementById('addjogosModal');
     const editModal = document.getElementById('editModal');
     const deleteModal = document.getElementById('deleteModal');
-    if (event.target === addMangaModal) {
-        closeAddMangaModal();
+    if (event.target === addjogosModal) {
+        closeAddjogosModal();
     }
     if (event.target === editModal) {
         closeEditModal();
@@ -559,7 +562,7 @@ window.onclick = function(event) {
 // View State Manager Class
 class ViewStateManager {
     constructor() {
-        this.storageKey = 'mangaViewMode';
+        this.storageKey = 'jogosViewMode';
         this.defaultView = 'list';
         this.validViews = ['list', 'cards'];
     }
@@ -774,8 +777,8 @@ function forceCardsLayout() {
             `;
             
             // Garantir que os cards individuais não tenham display: block
-            const mangaBlocks = cardsGrid.querySelectorAll('.manga-block');
-            mangaBlocks.forEach((block, index) => {
+            const jogosBlocks = cardsGrid.querySelectorAll('.jogos-block');
+            jogosBlocks.forEach((block, index) => {
                 // Remover qualquer display: block que possa ter sido aplicado
                 if (block.style.display === 'block') {
                     block.style.display = '';
@@ -843,7 +846,7 @@ class SystemValidator {
     validateModalSystem() {
         console.log('🧪 Testando sistema de modais...');
         
-        const addModal = document.getElementById('addMangaModal');
+        const addModal = document.getElementById('addjogosModal');
         const editModal = document.getElementById('editModal');
         const deleteModal = document.getElementById('deleteModal');
         
@@ -955,16 +958,16 @@ function testModalFunctionality() {
     
     // Test add modal
     console.log('Abrindo modal de adicionar...');
-    openAddMangaModal();
+    openAddjogosModal();
     
     setTimeout(() => {
-        const addModal = document.getElementById('addMangaModal');
+        const addModal = document.getElementById('addjogosModal');
         const isVisible = addModal && addModal.classList.contains('show');
         console.log('Modal de adicionar visível:', isVisible);
         
         if (isVisible) {
             console.log('Fechando modal de adicionar...');
-            closeAddMangaModal();
+            closeAddjogosModal();
         }
     }, 500);
 }
@@ -1059,21 +1062,21 @@ document.addEventListener('DOMContentLoaded', function() {
     
     if (listView) {
         console.log('List view classes:', listView.className);
-        const mangaItems = listView.querySelectorAll('.manga-item');
-        console.log('Mangás na list view:', mangaItems.length);
+        const jogosItems = listView.querySelectorAll('.jogos-item');
+        console.log('Jogos na list view:', jogosItems.length);
     }
     
     if (cardsView) {
         console.log('Cards view classes:', cardsView.className);
-        const mangaBlocks = cardsView.querySelectorAll('.manga-block');
-        console.log('Mangás na cards view:', mangaBlocks.length);
+        const jogosBlocks = cardsView.querySelectorAll('.jogos-block');
+        console.log('Jogos na cards view:', jogosBlocks.length);
         
-        if (mangaBlocks.length === 0) {
-            console.warn('⚠️ PROBLEMA: Cards view não tem mangás!');
+        if (jogosBlocks.length === 0) {
+            console.warn('⚠️ PROBLEMA: Cards view não tem jogos!');
             console.log('Conteúdo da cards view:', cardsView.innerHTML.substring(0, 1000));
         } else {
-            console.log('✅ Mangás encontrados na cards view');
-            mangaBlocks.forEach((block, index) => {
+            console.log('✅ Jogos encontrados na cards view');
+            jogosBlocks.forEach((block, index) => {
                 console.log(`Card ${index + 1}:`, block.className, block.style.cssText);
             });
         }
@@ -1149,17 +1152,17 @@ document.addEventListener('DOMContentLoaded', function() {
     
     console.log('=== FIM DEBUG CARREGAMENTO ===');
     
-    // Close add manga modal after form submission
+    // Close add jogos modal after form submission
     errorHandler.safeExecute(() => {
-        const addMangaForm = document.getElementById('addMangaForm');
-        if (addMangaForm) {
-            addMangaForm.addEventListener('submit', function() {
+        const addjogosForm = document.getElementById('addjogosForm');
+        if (addjogosForm) {
+            addjogosForm.addEventListener('submit', function() {
                 setTimeout(() => {
-                    closeAddMangaModal();
+                    closeAddjogosModal();
                 }, 100);
             });
         }
-    }, 'Add Manga Form Event Listener');
+    }, 'Add Jogos Form Event Listener');
     
     // Close delete modal after form submission
     errorHandler.safeExecute(() => {
@@ -1444,7 +1447,7 @@ class SortableManager {
     addDragHandles(container) {
         if (!container) return;
         
-        const items = container.querySelectorAll('.manga-item, .manga-block');
+        const items = container.querySelectorAll('.jogos-item, .jogos-block');
         items.forEach(item => {
             // Check if drag handle already exists
             if (!item.querySelector('.drag-handle')) {
@@ -1469,12 +1472,12 @@ class SortableManager {
             return;
         }
         
-        // Para lista, pegar os .manga-item, para cards pegar .manga-block
+        // Para lista, pegar os .jogos-item, para cards pegar .jogos-block
         const items = viewType === 'list' ? 
-            container.querySelectorAll('.manga-item') : 
-            container.querySelectorAll('.manga-block');
+            container.querySelectorAll('.jogos-item') : 
+            container.querySelectorAll('.jogos-block');
             
-        const newOrder = Array.from(items).map(el => el.dataset.mangaId);
+        const newOrder = Array.from(items).map(el => el.dataset.jogosId);
         
         // Debug: verificar se os IDs estão corretos
         console.log('New order array:', newOrder);
@@ -1482,20 +1485,20 @@ class SortableManager {
         
         // Verificar se há IDs válidos
         if (newOrder.length === 0 || newOrder.some(id => !id)) {
-            console.error('Invalid manga IDs found:', newOrder);
-            this.showNotification('Erro: IDs de mangá inválidos', true);
+            console.error('Invalid jogos IDs found:', newOrder);
+            this.showNotification('Erro: IDs de jogo inválidos', true);
             return;
         }
         
         try {
             const formData = new FormData();
             formData.append('action', 'update_order');
-            formData.append('manga_order', JSON.stringify(newOrder));
+            formData.append('jogos_order', JSON.stringify(newOrder));
             
             // Debug: verificar dados enviados
             console.log('Sending data:', {
                 action: 'update_order',
-                manga_order: JSON.stringify(newOrder)
+                jogos_order: JSON.stringify(newOrder)
             });
             
             const response = await fetch(window.location.href, {
@@ -1559,7 +1562,7 @@ function testBlocking() {
     console.log('🧪 TESTANDO BLOQUEIO DO CAMPO...');
     
     // Open modal
-    openAddMangaModal();
+    openAddjogosModal();
     
     setTimeout(() => {
         const checkbox = document.getElementById('addEmLancamento');
@@ -1598,17 +1601,17 @@ function testBlocking() {
                 console.log('✅ SUCESSO: Campo está bloqueado!');
             }
             
-            closeAddMangaModal();
+            closeAddjogosModal();
         }, 100);
     }, 100);
 }
 
 // Test checkbox blocking functionality
 function testCheckboxBlocking() {
-    console.log('🧪 Testando bloqueio do campo Total de Capítulos...');
+    console.log('🧪 Testando bloqueio do campo Total de Fases/Níveis...');
     
     // Open modal
-    openAddMangaModal();
+    openAddjogosModal();
     
     setTimeout(() => {
         const emLancamentoCheckbox = document.getElementById('addEmLancamento');
@@ -1626,7 +1629,7 @@ function testCheckboxBlocking() {
         console.log('   Valor:', totalCapitulosField.value);
         
         // Mark checkbox
-        console.log('2. Marcando checkbox "Mangá em lançamento"...');
+        console.log('2. Marcando checkbox "Jogo em lançamento"...');
         emLancamentoCheckbox.checked = true;
         emLancamentoCheckbox.dispatchEvent(new Event('change'));
         
@@ -1662,7 +1665,7 @@ function testCheckboxBlocking() {
                 console.log('   Campo readonly:', totalCapitulosField.readOnly);
                 console.log('   Valor:', totalCapitulosField.value);
                 
-                closeAddMangaModal();
+                closeAddjogosModal();
                 console.log('✅ Teste concluído!');
             }, 500);
         }, 500);
