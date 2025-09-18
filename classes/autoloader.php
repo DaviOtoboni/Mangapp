@@ -16,26 +16,8 @@ function mangapp_autoloader($className)
     
     // Mapeamento de classes para arquivos
     $classMap = [
-        // Interfaces
-        'APIInterface' => 'APIInterface.php',
-        'APIException' => 'APIInterface.php',
-        'NormalizedMangaData' => 'APIInterface.php',
-        
-        // Gerenciadores
-        'ContentTypeDetector' => 'ContentTypeDetector.php',
-        'RateLimiter' => 'RateLimiter.php',
-        
-        // Banco de Dados
-        'Database' => 'Database.php',
-        'Migration' => 'Migration.php',
-        'MangaModel' => 'MangaModel.php',
-        'UserLibrary' => 'UserLibrary.php',
-        'ChapterManager' => 'ChapterManager.php',
-        
-        // Utilitários
-        'APIMonitor' => 'APIMonitor.php',
-        'CacheMonitor' => 'CacheMonitor.php',
-        'MangaDataMigration' => 'MangaDataMigration.php'
+        // Apenas classes essenciais para o sistema local
+        'MangaDataProcessor' => 'MangaDataProcessorSimple.php'
     ];
     
     // Verificar se a classe está no mapeamento

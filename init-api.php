@@ -18,13 +18,9 @@ require_once __DIR__ . '/config.php';
 // Sistema local apenas - classes de API removidas
 // Carregar apenas classes essenciais que existem
 
-// Carregar MangaDataProcessor (usar versão disponível)
+// Carregar MangaDataProcessor
 if (!class_exists('MangaDataProcessor')) {
-    if (file_exists(__DIR__ . '/classes/MangaDataProcessor.php') && filesize(__DIR__ . '/classes/MangaDataProcessor.php') > 5000) {
-        require_once __DIR__ . '/classes/MangaDataProcessor.php';
-    } else {
-        require_once __DIR__ . '/classes/MangaDataProcessorSimple.php';
-    }
+    require_once __DIR__ . '/classes/MangaDataProcessorSimple.php';
 }
 
 // Sistema local apenas - APIs externas removidas

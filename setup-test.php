@@ -45,5 +45,5 @@ echo "<h2>Mangás de teste criados!</h2>";
 echo "<p>Total: " . count($_SESSION['mangas']) . " mangás</p>";
 echo "<a href='index.php' style='background: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px;'>Ir para a lista</a>";
 echo "<br><br>";
-echo "<a href='test-order.html' style='background: #28a745; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px;'>Testar sistema de ordem</a>";
+echo "<a href='test-sortable.html' style='background: #28a745; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px;'>Testar sistema de ordem</a>";
 ?>
