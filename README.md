@@ -78,94 +78,67 @@ A aplicação é totalmente responsiva e funciona perfeitamente em:
 ### Requisitos
 
 - Servidor web com suporte a PHP 7.4+
-- MySQL 5.7+ ou MariaDB equivalente
-- Extensões PHP: curl, json, pdo_mysql, mbstring
-- Conexão com internet para APIs externas
+- Extensões PHP: curl, json, mbstring (opcional para APIs)
+- Conexão com internet para APIs externas (opcional)
 - Navegador web moderno
 
 ### Instalação
 
 1. **Clone ou baixe** os arquivos para seu servidor web
-2. **Configure** o banco de dados MySQL
-3. **Execute** as migrações: `php migrate.php`
-4. **Configure** as APIs no arquivo `config/apis.php`
-5. **Verifique** a saúde do sistema: `php health-check.php`
-6. **Acesse** o arquivo `index.php` no navegador
-7. **Comece** a buscar e adicionar seus mangás!
+2. **Configure** as APIs no arquivo `config.php` (opcional)
+3. **Acesse** o arquivo `index.php` no navegador
+4. **Comece** a buscar e adicionar seus mangás!
+
+> **Nota**: Este é um sistema local que funciona sem banco de dados, armazenando os dados na sessão do navegador.
 
 ## ⚙️ Configuração
 
-### Configuração do Banco de Dados
+### Configuração das APIs (Opcional)
 
-Edite o arquivo `config/database.php`:
-
-```php
-return [
-    'host' => 'localhost',
-    'dbname' => 'mangapp',
-    'username' => 'seu_usuario',
-    'password' => 'sua_senha',
-    'charset' => 'utf8mb4'
-];
-```
-
-### Configuração das APIs
-
-Edite o arquivo `config/apis.php`:
+Para usar APIs externas, edite o arquivo `config.php`:
 
 ```php
-return [
+// Configurações das APIs externas
+$api_config = [
     'jikan' => [
         'base_url' => 'https://api.jikan.moe/v4',
-        'rate_limit' => 3,
-        'timeout' => 10,
         'enabled' => true
     ],
     'mangadx' => [
         'base_url' => 'https://api.mangadx.org',
-        'rate_limit' => 5,
-        'timeout' => 10,
-        'cache_ttl' => 3600,
-        'user_agent' => 'MangApp/1.0 (https://yoursite.com)',
         'enabled' => true
     ]
 ];
 ```
 
-### Configuração do Cache
+### Configuração do Sistema
 
-Edite o arquivo `config/cache_config.php`:
-
-```php
-return [
-    'enabled' => true,
-    'default_ttl' => 3600,
-    'local' => [
-        'search_ttl' => 1800,
-        'details_ttl' => 7200
-        'chapters_ttl' => 3600,
-        'covers_ttl' => 86400
-    ]
-];
-```
+O sistema funciona principalmente de forma local, armazenando os dados na sessão do navegador. As configurações principais estão no arquivo `config.php`.
 
 ### Estrutura de Arquivos
 
 ```
-MagAppLocal/
-├── api/                    # Endpoints da API
-├── classes/               # Classes PHP do sistema
-├── config/               # Arquivos de configuração
-├── docs/                 # Documentação
-├── cache/                # Cache de dados das APIs
-├── covers/               # Imagens de capa
-├── css/                  # Arquivos de estilo
-├── js/                   # Scripts JavaScript
-├── tests/                # Testes unitários
-├── index.php             # Arquivo principal
-├── migrate.php           # Script de migração
-├── health-check.php      # Verificação de saúde
-└── README.md             # Documentação
+Mangapp/
+├── assets/               # Recursos estáticos
+│   └── images/          # Imagens do sistema
+├── classes/             # Classes PHP do sistema
+│   ├── autoloader.php   # Carregador automático de classes
+│   └── MangaDataProcessorSimple.php  # Processador de dados
+├── covers/              # Imagens de capa dos mangás
+│   └── originals/       # Capas originais
+├── classes/             # Classes PHP do sistema
+├── config.php           # Configuração principal
+├── config-simple.php    # Configuração simplificada
+├── debug-drag-drop.html # Página de teste de drag & drop
+├── index.php            # Arquivo principal
+├── init-api.php         # Inicializador de APIs
+├── script.js            # Scripts JavaScript
+├── search-results.php   # Página de resultados de busca
+├── setup-test.php       # Página de teste do sistema
+├── styles.css           # Estilos CSS
+├── template.php         # Template HTML principal
+├── test-sortable.html   # Página de teste de ordenação
+└── README.md            # Documentação
 ```
 
 ## 🔧 Personalização
@@ -210,19 +183,22 @@ Cada mangá é armazenado com as seguintes informações:
 
 ## 📚 Documentação Adicional
 
-- **[Sistema Local](docs/local_system.md)**: Documentação do sistema local
-- **[Guia de Deployment](docs/deployment_guide.md)**: Instruções detalhadas para produção
-- **[Sistema de Cache](docs/cache_system.md)**: Documentação do sistema de cache
+- **Sistema Local**: O projeto funciona completamente offline, armazenando dados na sessão do navegador
+- **APIs Externas**: Integração opcional com APIs como Jikan e MangaDx para busca de informações
+- **Sistema de Upload**: Upload de capas de mangás com redimensionamento automático
 
 ## 🔮 Roadmap Futuro
 
+- [x] Sistema local funcional
+- [x] Interface responsiva
+- [x] Upload de capas
+- [x] Sistema de busca
 - [ ] Sistema de banco de dados
 - [ ] Autenticação de usuários
 - [ ] Sistema de tags e categorias
 - [ ] API REST
 - [ ] Sistema de backup
 - [ ] Estatísticas avançadas
-- [ ] Modo offline
 - [ ] Aplicativo mobile
 
 ## 🤝 Contribuição
