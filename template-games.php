@@ -6,7 +6,7 @@
     <title>MangApp - Gerenciador de Mangás</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles-mangas.css">
+    <link rel="stylesheet" href="styles-games.css">
     
     
     <!-- Scripts da integração API -->
@@ -17,7 +17,7 @@
         <div class="container">
             <div class="navbar-content">
                 <div class="navbar-left">
-                    <a href="index-mangas.php" class="logo">
+                    <a href="index-games.php" class="logo">
                         <i class="fas fa-book-open"></i>
                         MangApp
                     </a>
@@ -29,11 +29,9 @@
                 </div>
                 <div class="navbar-right">
                     <div class="nav-links">
-                        <a href="index-mangas.php" class="nav-link active">
-                            Mangás
-                        </a>
+                        <a href="index-mangas.php" class="nav-link">Mangás</a>
                         <a href="#" class="nav-link">Animes</a>
-                        <a href="index-games.php" class="nav-link">Jogos</a>
+                        <a href="index-games.php" class="nav-link active">Jogos</a>
                     </div>
                     <button class="theme-toggle" onclick="toggleTheme()">
                         <i class="fas fa-moon"></i>
@@ -851,7 +849,7 @@
     </script>
     <!-- SortableJS Library -->
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
-    <script src="script-mangas.js"></script>
+    <script src="script-games.js"></script>
     
     <script>
         // Toggle de tema
@@ -869,7 +867,7 @@
             }
             
             // Salvar tema via AJAX
-            fetch('index-mangas.php', {
+            fetch('index-games.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
