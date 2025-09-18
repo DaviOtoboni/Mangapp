@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MangApp - Gerenciador de Mangás</title>
+    <title>Magapp - Gerencie seu progresso!</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles-mangas.css">
@@ -29,10 +29,8 @@
                 </div>
                 <div class="navbar-right">
                     <div class="nav-links">
-                        <a href="index-mangas.php" class="nav-link active">
-                            Mangás
-                        </a>
-                        <a href="#" class="nav-link">Animes</a>
+                        <a href="index-mangas.php" class="nav-link active">Mangás</a>
+                        <a href="index-animes.php" class="nav-link">Animes</a>
                         <a href="index-games.php" class="nav-link">Jogos</a>
                     </div>
                     <button class="theme-toggle" onclick="toggleTheme()">

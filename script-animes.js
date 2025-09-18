@@ -52,10 +52,10 @@ function switchView(viewMode) {
             targetView.style.display = 'block';
             
             // Verificar se há conteúdo dentro da view
-            const mangaBlocks = targetView.querySelectorAll('.manga-block');
+            const animeBlocks = targetView.querySelectorAll('.anime-block');
             const cardsGrid = targetView.querySelector('.cards-grid');
             
-            console.log('Mangás encontrados na view:', mangaBlocks.length);
+            console.log('Animes encontrados na view:', animeBlocks.length);
             console.log('Cards grid encontrado:', cardsGrid ? 'SIM' : 'NÃO');
             
             if (cardsGrid) {
@@ -67,8 +67,8 @@ function switchView(viewMode) {
                 // Removido para evitar conflitos
             }
             
-            if (mangaBlocks.length === 0 && viewMode === 'cards') {
-                console.warn('⚠️ NENHUM MANGÁ ENCONTRADO NA VIEW CARDS!');
+            if (animeBlocks.length === 0 && viewMode === 'cards') {
+                console.warn('⚠️ NENHUM ANIME ENCONTRADO NA VIEW CARDS!');
                 console.log('Estrutura da view:', targetView.innerHTML.substring(0, 1000));
                 
                 // Check if there are any hidden elements
@@ -77,9 +77,9 @@ function switchView(viewMode) {
                 hiddenElements.forEach(el => {
                     console.log('Elemento oculto:', el.tagName, el.className, el.style.cssText);
                 });
-            } else if (mangaBlocks.length > 0) {
-                console.log('✅ Mangás encontrados na view cards, forçando visibilidade...');
-                mangaBlocks.forEach((block, index) => {
+            } else if (animeBlocks.length > 0) {
+                console.log('✅ Animes encontrados na view cards, forçando visibilidade...');
+                animeBlocks.forEach((block, index) => {
                     // Não aplicar display: block nos cards, deixar o CSS gerenciar
                     block.style.visibility = 'visible';
                     console.log(`Bloco ${index + 1}:`, block.style.cssText);
@@ -123,15 +123,15 @@ function switchView(viewMode) {
 }
 
 // Delete confirmation modal functions
-function openDeleteModal(mangaId, mangaName) {
+function openDeleteModal(animeId, animeName) {
     errorHandler.safeExecute(() => {
         const modal = errorHandler.validateElement('deleteModal', 'Open Delete Modal');
-        const idField = errorHandler.validateElement('deleteMangaId', 'Delete Modal ID Field');
-        const nameField = errorHandler.validateElement('deleteMangaName', 'Delete Modal Name Field');
+        const idField = errorHandler.validateElement('deleteAnimeId', 'Delete Modal ID Field');
+        const nameField = errorHandler.validateElement('deleteAnimeName', 'Delete Modal Name Field');
         
         if (modal && idField && nameField) {
-            idField.value = mangaId;
-            nameField.textContent = mangaName;
+            idField.value = animeId;
+            nameField.textContent = animeName;
             modal.classList.add('show');
         }
     }, 'openDeleteModal');
@@ -146,15 +146,15 @@ function closeDeleteModal() {
     }, 'closeDeleteModal');
 }
 
-// Add Manga Modal functions
-function openAddMangaModal() {
+// Add Anime Modal functions
+function openAddAnimeModal() {
     errorHandler.safeExecute(() => {
-        const modal = errorHandler.validateElement('addMangaModal', 'Open Add Modal');
+        const modal = errorHandler.validateElement('addAnimeModal', 'Open Add Modal');
         if (modal) {
             modal.classList.add('show');
             
             // Reset form fields
-            const form = document.getElementById('addMangaForm');
+            const form = document.getElementById('addAnimeForm');
             if (form) {
                 form.reset();
             }
@@ -174,16 +174,16 @@ function openAddMangaModal() {
             // Reset required fields when opening modal
             toggleRequiredFields();
         }
-    }, 'openAddMangaModal');
+    }, 'openAddAnimeModal');
 }
 
-function closeAddMangaModal() {
+function closeAddAnimeModal() {
     errorHandler.safeExecute(() => {
-        const modal = errorHandler.validateElement('addMangaModal', 'Close Add Modal');
+        const modal = errorHandler.validateElement('addAnimeModal', 'Close Add Modal');
         if (modal) {
             modal.classList.remove('show');
         }
-    }, 'closeAddMangaModal');
+    }, 'closeAddAnimeModal');
 }
 
 // Modal Validation System
@@ -422,7 +422,7 @@ function toggleEditRequiredFields() {
 }
 
 // Edit modal functions
-function openEditModal(mangaId) {
+function openEditModal(animeId) {
     try {
         const modal = document.getElementById('editModal');
         if (!modal) {
@@ -430,20 +430,20 @@ function openEditModal(mangaId) {
             return;
         }
         
-        const mangas = window.mangaData || []; // Get manga data from global variable
-        const manga = mangas.find(m => m.id === mangaId);
+        const animes = window.animeData || []; // Get anime data from global variable
+        const anime = animes.find(a => a.id === animeId);
         
-        if (!manga) {
-            console.error('Mangá não encontrado:', mangaId);
+        if (!anime) {
+            console.error('Anime não encontrado:', animeId);
             return;
         }
         
         // Populate form fields with validation
-        modalValidator.validateElement('editId', el => el.value = manga.id);
-        modalValidator.validateElement('editNome', el => el.value = manga.nome);
-        modalValidator.validateElement('editStatus', el => el.value = manga.status);
-        modalValidator.validateElement('editCapitulosTotal', el => el.value = manga.capitulos_total);
-        modalValidator.validateElement('editCapituloAtual', el => el.value = manga.capitulo_atual);
+        modalValidator.validateElement('editId', el => el.value = anime.id);
+        modalValidator.validateElement('editNome', el => el.value = anime.nome);
+        modalValidator.validateElement('editStatus', el => el.value = anime.status);
+        modalValidator.validateElement('editCapitulosTotal', el => el.value = anime.capitulos_total);
+        modalValidator.validateElement('editCapituloAtual', el => el.value = anime.capitulo_atual);
         // Preencher gêneros múltiplos (checkboxes)
         const editGenerosCheckboxes = document.querySelectorAll('#editModal input[name="generos[]"]');
         if (editGenerosCheckboxes.length > 0) {
@@ -452,8 +452,8 @@ function openEditModal(mangaId) {
                 checkbox.checked = false;
             });
             
-            // Selecionar gêneros do mangá
-            const generos = manga.generos || [];
+            // Selecionar gêneros do anime
+            const generos = anime.generos || [];
             if (Array.isArray(generos)) {
                 generos.forEach(genero => {
                     const checkbox = Array.from(editGenerosCheckboxes).find(cb => cb.value === genero);
@@ -463,8 +463,8 @@ function openEditModal(mangaId) {
                 });
             }
         }
-        modalValidator.validateElement('editFinalizado', el => el.checked = manga.finalizado);
-        modalValidator.validateElement('editEmLancamento', el => el.checked = manga.em_lancamento || false);
+        modalValidator.validateElement('editFinalizado', el => el.checked = anime.finalizado);
+        modalValidator.validateElement('editEmLancamento', el => el.checked = anime.em_lancamento || false);
         // Configurar preview da capa
         const editCoverPreview = document.getElementById('editCoverPreview');
         if (editCoverPreview) {
@@ -472,9 +472,9 @@ function openEditModal(mangaId) {
             let hasCover = false;
             
             // Função para testar extensões sequencialmente
-            const testImageExtensions = async (extensions, mangaId) => {
+            const testImageExtensions = async (extensions, animeId) => {
                 for (const ext of extensions) {
-                    const testUrl = `covers/originals/${mangaId}.${ext}`;
+                    const testUrl = `covers/originals/${animeId}.${ext}`;
                     try {
                         const response = await fetch(testUrl, { method: 'HEAD' });
                         if (response.ok) {
@@ -490,14 +490,14 @@ function openEditModal(mangaId) {
             
             // Verificar se tem capa personalizada
             const extensions = ['jpg', 'png', 'webp'];
-            testImageExtensions(extensions, manga.id).then(found => {
+            testImageExtensions(extensions, anime.id).then(found => {
                 if (!found) {
                     // Se não tem capa personalizada, verificar dados da API
-                    if (manga.api_data && manga.api_data.images) {
-                        if (manga.api_data.images.jpg && manga.api_data.images.jpg.large_image_url) {
-                            coverUrl = manga.api_data.images.jpg.large_image_url;
-                        } else if (manga.api_data.images.jpg && manga.api_data.images.jpg.image_url) {
-                            coverUrl = manga.api_data.images.jpg.image_url;
+                    if (anime.api_data && anime.api_data.images) {
+                        if (anime.api_data.images.jpg && anime.api_data.images.jpg.large_image_url) {
+                            coverUrl = anime.api_data.images.jpg.large_image_url;
+                        } else if (anime.api_data.images.jpg && anime.api_data.images.jpg.image_url) {
+                            coverUrl = anime.api_data.images.jpg.image_url;
                         }
                         
                         if (coverUrl) {
@@ -542,11 +542,11 @@ function closeEditModal() {
 
 // Close modal when clicking outside
 window.onclick = function(event) {
-    const addMangaModal = document.getElementById('addMangaModal');
+    const addAnimeModal = document.getElementById('addAnimeModal');
     const editModal = document.getElementById('editModal');
     const deleteModal = document.getElementById('deleteModal');
-    if (event.target === addMangaModal) {
-        closeAddMangaModal();
+    if (event.target === addAnimeModal) {
+        closeAddAnimeModal();
     }
     if (event.target === editModal) {
         closeEditModal();
@@ -559,7 +559,7 @@ window.onclick = function(event) {
 // View State Manager Class
 class ViewStateManager {
     constructor() {
-        this.storageKey = 'mangaViewMode';
+        this.storageKey = 'animeViewMode';
         this.defaultView = 'list';
         this.validViews = ['list', 'cards'];
     }
@@ -774,8 +774,8 @@ function forceCardsLayout() {
             `;
             
             // Garantir que os cards individuais não tenham display: block
-            const mangaBlocks = cardsGrid.querySelectorAll('.manga-block');
-            mangaBlocks.forEach((block, index) => {
+            const animeBlocks = cardsGrid.querySelectorAll('.anime-block');
+            animeBlocks.forEach((block, index) => {
                 // Remover qualquer display: block que possa ter sido aplicado
                 if (block.style.display === 'block') {
                     block.style.display = '';
@@ -843,7 +843,7 @@ class SystemValidator {
     validateModalSystem() {
         console.log('🧪 Testando sistema de modais...');
         
-        const addModal = document.getElementById('addMangaModal');
+        const addModal = document.getElementById('addAnimeModal');
         const editModal = document.getElementById('editModal');
         const deleteModal = document.getElementById('deleteModal');
         
@@ -955,16 +955,16 @@ function testModalFunctionality() {
     
     // Test add modal
     console.log('Abrindo modal de adicionar...');
-    openAddMangaModal();
+    openAddAnimeModal();
     
     setTimeout(() => {
-        const addModal = document.getElementById('addMangaModal');
+        const addModal = document.getElementById('addAnimeModal');
         const isVisible = addModal && addModal.classList.contains('show');
         console.log('Modal de adicionar visível:', isVisible);
         
         if (isVisible) {
             console.log('Fechando modal de adicionar...');
-            closeAddMangaModal();
+            closeAddAnimeModal();
         }
     }, 500);
 }
@@ -1059,21 +1059,21 @@ document.addEventListener('DOMContentLoaded', function() {
     
     if (listView) {
         console.log('List view classes:', listView.className);
-        const mangaItems = listView.querySelectorAll('.manga-item');
-        console.log('Mangás na list view:', mangaItems.length);
+        const animeItems = listView.querySelectorAll('.anime-item');
+        console.log('Animes na list view:', animeItems.length);
     }
     
     if (cardsView) {
         console.log('Cards view classes:', cardsView.className);
-        const mangaBlocks = cardsView.querySelectorAll('.manga-block');
-        console.log('Mangás na cards view:', mangaBlocks.length);
+        const animeBlocks = cardsView.querySelectorAll('.anime-block');
+        console.log('Animes na cards view:', animeBlocks.length);
         
-        if (mangaBlocks.length === 0) {
-            console.warn('⚠️ PROBLEMA: Cards view não tem mangás!');
+        if (animeBlocks.length === 0) {
+            console.warn('⚠️ PROBLEMA: Cards view não tem animes!');
             console.log('Conteúdo da cards view:', cardsView.innerHTML.substring(0, 1000));
         } else {
-            console.log('✅ Mangás encontrados na cards view');
-            mangaBlocks.forEach((block, index) => {
+            console.log('✅ Animes encontrados na cards view');
+            animeBlocks.forEach((block, index) => {
                 console.log(`Card ${index + 1}:`, block.className, block.style.cssText);
             });
         }
@@ -1149,17 +1149,17 @@ document.addEventListener('DOMContentLoaded', function() {
     
     console.log('=== FIM DEBUG CARREGAMENTO ===');
     
-    // Close add manga modal after form submission
+    // Close add anime modal after form submission
     errorHandler.safeExecute(() => {
-        const addMangaForm = document.getElementById('addMangaForm');
-        if (addMangaForm) {
-            addMangaForm.addEventListener('submit', function() {
+        const addAnimeForm = document.getElementById('addAnimeForm');
+        if (addAnimeForm) {
+            addAnimeForm.addEventListener('submit', function() {
                 setTimeout(() => {
-                    closeAddMangaModal();
+                    closeAddAnimeModal();
                 }, 100);
             });
         }
-    }, 'Add Manga Form Event Listener');
+    }, 'Add Anime Form Event Listener');
     
     // Close delete modal after form submission
     errorHandler.safeExecute(() => {
@@ -1338,9 +1338,9 @@ function handleFinalizadoChange(checkbox) {
     const emLancamento = document.getElementById('addEmLancamento');
     if (checkbox.checked) {
         if (emLancamento) emLancamento.checked = false;
-        console.log('✅ Mangá finalizado marcado');
+        console.log('✅ Anime finalizado marcado');
     } else {
-        console.log('✅ Mangá finalizado desmarcado');
+        console.log('✅ Anime finalizado desmarcado');
     }
 }
 
@@ -1349,9 +1349,9 @@ function handleEditFinalizadoChange(checkbox) {
     const emLancamento = document.getElementById('editEmLancamento');
     if (checkbox.checked) {
         if (emLancamento) emLancamento.checked = false;
-        console.log('✅ Mangá finalizado marcado');
+        console.log('✅ Anime finalizado marcado');
     } else {
-        console.log('✅ Mangá finalizado desmarcado');
+        console.log('✅ Anime finalizado desmarcado');
     }
 }
 
@@ -1444,7 +1444,7 @@ class SortableManager {
     addDragHandles(container) {
         if (!container) return;
         
-        const items = container.querySelectorAll('.manga-item, .manga-block');
+        const items = container.querySelectorAll('.anime-item, .anime-block');
         items.forEach(item => {
             // Check if drag handle already exists
             if (!item.querySelector('.drag-handle')) {
@@ -1469,12 +1469,12 @@ class SortableManager {
             return;
         }
         
-        // Para lista, pegar os .manga-item, para cards pegar .manga-block
+        // Para lista, pegar os .anime-item, para cards pegar .anime-block
         const items = viewType === 'list' ? 
-            container.querySelectorAll('.manga-item') : 
-            container.querySelectorAll('.manga-block');
+            container.querySelectorAll('.anime-item') : 
+            container.querySelectorAll('.anime-block');
             
-        const newOrder = Array.from(items).map(el => el.dataset.mangaId);
+        const newOrder = Array.from(items).map(el => el.dataset.animeId);
         
         // Debug: verificar se os IDs estão corretos
         console.log('New order array:', newOrder);
@@ -1482,20 +1482,20 @@ class SortableManager {
         
         // Verificar se há IDs válidos
         if (newOrder.length === 0 || newOrder.some(id => !id)) {
-            console.error('Invalid manga IDs found:', newOrder);
-            this.showNotification('Erro: IDs de mangá inválidos', true);
+            console.error('Invalid anime IDs found:', newOrder);
+            this.showNotification('Erro: IDs de anime inválidos', true);
             return;
         }
         
         try {
             const formData = new FormData();
             formData.append('action', 'update_order');
-            formData.append('manga_order', JSON.stringify(newOrder));
+            formData.append('anime_order', JSON.stringify(newOrder));
             
             // Debug: verificar dados enviados
             console.log('Sending data:', {
                 action: 'update_order',
-                manga_order: JSON.stringify(newOrder)
+                anime_order: JSON.stringify(newOrder)
             });
             
             const response = await fetch(window.location.href, {
@@ -1559,7 +1559,7 @@ function testBlocking() {
     console.log('🧪 TESTANDO BLOQUEIO DO CAMPO...');
     
     // Open modal
-    openAddMangaModal();
+    openAddAnimeModal();
     
     setTimeout(() => {
         const checkbox = document.getElementById('addEmLancamento');
@@ -1598,7 +1598,7 @@ function testBlocking() {
                 console.log('✅ SUCESSO: Campo está bloqueado!');
             }
             
-            closeAddMangaModal();
+            closeAddAnimeModal();
         }, 100);
     }, 100);
 }
@@ -1608,7 +1608,7 @@ function testCheckboxBlocking() {
     console.log('🧪 Testando bloqueio do campo Total de Capítulos...');
     
     // Open modal
-    openAddMangaModal();
+    openAddAnimeModal();
     
     setTimeout(() => {
         const emLancamentoCheckbox = document.getElementById('addEmLancamento');
@@ -1626,7 +1626,7 @@ function testCheckboxBlocking() {
         console.log('   Valor:', totalCapitulosField.value);
         
         // Mark checkbox
-        console.log('2. Marcando checkbox "Mangá em lançamento"...');
+        console.log('2. Marcando checkbox "anime em lançamento"...');
         emLancamentoCheckbox.checked = true;
         emLancamentoCheckbox.dispatchEvent(new Event('change'));
         
@@ -1662,7 +1662,7 @@ function testCheckboxBlocking() {
                 console.log('   Campo readonly:', totalCapitulosField.readOnly);
                 console.log('   Valor:', totalCapitulosField.value);
                 
-                closeAddMangaModal();
+                closeAddAnimeModal();
                 console.log('✅ Teste concluído!');
             }, 500);
         }, 500);

@@ -30,7 +30,7 @@
                 <div class="navbar-right">
                     <div class="nav-links">
                         <a href="index-mangas.php" class="nav-link">Mangás</a>
-                        <a href="#" class="nav-link">Animes</a>
+                        <a href="index-animes.php" class="nav-link">Animes</a>
                         <a href="index-games.php" class="nav-link active">Jogos</a>
                     </div>
                     <button class="theme-toggle" onclick="toggleTheme()">
@@ -427,7 +427,7 @@
                     <!-- Lado Direito - Campos -->
                     <div class="modal-right">
                         <div class="form-group">
-                            <label class="form-label">Nome do Jogo*</label>
+                            <label class="form-label">Nome do Jogo *</label>
                             <input type="text" name="nome" id="addNome" class="form-input" required>
                         </div>
                         
@@ -442,7 +442,7 @@
                         </div>
                         
                         <div class="form-group">
-                            <label class="form-label">Status*</label>
+                            <label class="form-label">Status *</label>
                             <select name="status" id="addStatus" class="form-select" required onchange="toggleRequiredFields()">
                                 <option value="">Selecione...</option>
                                 <option value="jogando">Jogando</option>
