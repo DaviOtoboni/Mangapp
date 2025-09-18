@@ -45,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
             $_SESSION['mangas'][] = $manga;
             
             // Redirecionar para a página principal
-            header('Location: index.php?added=1');
+            header('Location: index-mangas.php?added=1');
             exit;
         } catch (Exception $e) {
             $error_message = "Erro ao adicionar mangá: " . $e->getMessage();
@@ -93,7 +93,7 @@ if (!empty($termo_pesquisa)) {
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- CSS externo APENAS para navbar -->
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles-mangas.css">
     
     <style>
         /* Sobrescrever apenas estilos base que conflitam */
@@ -373,7 +373,7 @@ if (!empty($termo_pesquisa)) {
         <div class="container">
             <div class="navbar-content">
                 <div class="navbar-left">
-                    <a href="index.php" class="logo">
+                    <a href="index-mangas.php" class="logo">
                         <i class="fas fa-book-open"></i>
                         MangApp
                     </a>
@@ -386,7 +386,7 @@ if (!empty($termo_pesquisa)) {
                 </div>
                 <div class="navbar-right">
                     <div class="nav-links">
-                        <a href="index.php" class="nav-link">
+                        <a href="index-mangas.php" class="nav-link">
                             Mangás
                         </a>
                         <a href="#" class="nav-link">Animes</a>
@@ -413,7 +413,7 @@ if (!empty($termo_pesquisa)) {
                 <button type="submit" class="btn btn-primary">
                     <i class="fas fa-search"></i> Buscar
                 </button>
-                <a href="index.php" class="btn btn-secondary">
+                <a href="index-mangas.php" class="btn btn-secondary">
                     <i class="fas fa-arrow-left"></i> Voltar
                 </a>
             </form>

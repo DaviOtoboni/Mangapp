@@ -86,7 +86,7 @@ A aplicação é totalmente responsiva e funciona perfeitamente em:
 
 1. **Clone ou baixe** os arquivos para seu servidor web
 2. **Configure** as APIs no arquivo `config.php` (opcional)
-3. **Acesse** o arquivo `index.php` no navegador
+3. **Acesse** o arquivo `index-mangas.php` no navegador
 4. **Comece** a buscar e adicionar seus mangás!
 
 > **Nota**: Este é um sistema local que funciona sem banco de dados, armazenando os dados na sessão do navegador.
@@ -130,13 +130,13 @@ Mangapp/
 ├── config.php           # Configuração principal
 ├── config-simple.php    # Configuração simplificada
 ├── debug-drag-drop.html # Página de teste de drag & drop
-├── index.php            # Arquivo principal
+├── index-mangas.php     # Arquivo principal
 ├── init-api.php         # Inicializador de APIs
-├── script.js            # Scripts JavaScript
+├── script-mangas.js     # Scripts JavaScript
 ├── search-results.php   # Página de resultados de busca
 ├── setup-test.php       # Página de teste do sistema
-├── styles.css           # Estilos CSS
-├── template.php         # Template HTML principal
+├── styles-mangas.css    # Estilos CSS
+├── template-mangas.php  # Template HTML principal
 ├── test-sortable.html   # Página de teste de ordenação
 └── README.md            # Documentação
 ```
@@ -145,7 +145,7 @@ Mangapp/
 
 ### Cores e Temas
 
-As cores são definidas através de variáveis CSS e podem ser facilmente personalizadas editando o arquivo `index.php` na seção `:root`.
+As cores são definidas através de variáveis CSS e podem ser facilmente personalizadas editando o arquivo `styles-mangas.css` na seção `:root`.
 
 ### Funcionalidades Adicionais
 

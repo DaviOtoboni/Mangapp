@@ -289,5 +289,5 @@ $mangas_abandonados = count(array_filter($_SESSION['mangas'], fn($m) => $m['stat
 $mangas_finalizados = count(array_filter($_SESSION['mangas'], fn($m) => $m['finalizado']));
 
 // Incluir o template PHP
-include 'template.php';
+include 'template-mangas.php';
 ?>

@@ -6,7 +6,7 @@
     <title>MangApp - Gerenciador de Mangás</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles-mangas.css">
     
     
     <!-- Scripts da integração API -->
@@ -17,7 +17,7 @@
         <div class="container">
             <div class="navbar-content">
                 <div class="navbar-left">
-                    <a href="index.php" class="logo">
+                    <a href="index-mangas.php" class="logo">
                         <i class="fas fa-book-open"></i>
                         MangApp
                     </a>
@@ -29,7 +29,7 @@
                 </div>
                 <div class="navbar-right">
                     <div class="nav-links">
-                        <a href="index.php" class="nav-link active">
+                        <a href="index-mangas.php" class="nav-link active">
                             Mangás
                         </a>
                         <a href="#" class="nav-link">Animes</a>
@@ -851,7 +851,7 @@
     </script>
     <!-- SortableJS Library -->
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
-    <script src="script.js"></script>
+    <script src="script-mangas.js"></script>
     
     <script>
         // Toggle de tema
@@ -869,7 +869,7 @@
             }
             
             // Salvar tema via AJAX
-            fetch('index.php', {
+            fetch('index-mangas.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
