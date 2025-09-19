@@ -106,10 +106,10 @@ function getCoverUrl($item, $type) {
     return $cover_url;
 }
 
-// Obter itens recentes (últimos 5 de cada categoria)
-$mangas_recentes = array_slice(array_reverse($_SESSION['mangas']), 0, 5);
-$animes_recentes = array_slice(array_reverse($_SESSION['animes']), 0, 5);
-$jogos_recentes = array_slice(array_reverse($_SESSION['jogos']), 0, 5);
+// Obter itens recentes (últimos 4 de cada categoria)
+$mangas_recentes = array_slice(array_reverse($_SESSION['mangas']), 0, 4);
+$animes_recentes = array_slice(array_reverse($_SESSION['animes']), 0, 4);
+$jogos_recentes = array_slice(array_reverse($_SESSION['jogos']), 0, 4);
 
 // Calcular métricas gerais
 $total_mangas = count($_SESSION['mangas']);
@@ -454,69 +454,98 @@ $total_itens = $total_mangas + $total_animes + $total_jogos;
         }
 
         .recent-items {
-            display: flex;
-            flex-direction: column;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 1rem;
         }
 
         .recent-item {
             display: flex;
-            align-items: center;
-            gap: 1rem;
-            padding: 1rem;
+            flex-direction: column;
             background: var(--bg-secondary);
-            border-radius: var(--border-radius);
+            border-radius: 0.75rem;
             border: 1px solid var(--border-color);
             transition: all 0.3s ease;
+            overflow: hidden;
+            position: relative;
         }
 
         .recent-item:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
         }
 
         .item-cover {
-            width: 60px;
-            height: 80px;
-            border-radius: 0.375rem;
+            width: 100%;
+            height: 200px;
+            border-radius: 0;
             overflow: hidden;
-            flex-shrink: 0;
             background: var(--bg-tertiary);
             display: flex;
             align-items: center;
             justify-content: center;
+            position: relative;
         }
 
         .item-cover img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .recent-item:hover .item-cover img {
+            transform: scale(1.05);
         }
 
         .cover-placeholder {
             color: var(--text-muted);
-            font-size: 1.5rem;
+            font-size: 3rem;
         }
 
         .item-info {
+            padding: 1rem;
             flex: 1;
-            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
         }
 
         .item-title {
             font-weight: 600;
-            margin-bottom: 0.25rem;
+            font-size: 1rem;
+            line-height: 1.3;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            /*min-height: 2.6rem;*/
+        }
+
+        .item-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .item-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .item-meta span:last-child {
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
 
-        .item-meta {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.75rem;
-            font-size: 0.875rem;
-            color: var(--text-secondary);
+        .item-meta i {
+            width: 14px;
+            text-align: center;
         }
 
         .item-status {
@@ -545,18 +574,36 @@ $total_itens = $total_mangas + $total_animes + $total_jogos;
 
         /* Responsive */
         @media (max-width: 768px) {
-            .recent-item {
-                flex-direction: column;
-                text-align: center;
+            .recent-items {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                gap: 0.75rem;
             }
             
             .item-cover {
-                width: 80px;
-                height: 100px;
+                height: 180px;
+            }
+            
+            .item-info {
+                padding: 0.75rem;
+            }
+            
+            .item-title {
+                font-size: 0.9rem;
+                min-height: 2.3rem;
             }
             
             .item-meta {
-                justify-content: center;
+                font-size: 0.8rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .recent-items {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .item-cover {
+                height: 160px;
             }
         }
     </style>
