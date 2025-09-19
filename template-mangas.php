@@ -29,6 +29,7 @@
                 </div>
                 <div class="navbar-right">
                     <div class="nav-links">
+                        <a href="dashboard.php" class="nav-link">Dashboard</a>
                         <a href="index-mangas.php" class="nav-link active">Mangás</a>
                         <a href="index-animes.php" class="nav-link">Animes</a>
                         <a href="index-games.php" class="nav-link">Jogos</a>

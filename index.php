@@ -9,7 +9,7 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Redirecionar para a página de mangás
-header('Location: index-mangas.php');
+// Redirecionar para o dashboard
+header('Location: dashboard.php');
 exit;
 ?>
