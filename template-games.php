@@ -17,8 +17,8 @@
         <div class="container">
             <div class="navbar-content">
                 <div class="navbar-left">
-                    <a href="index-games.php" class="logo">
-                        <i class="fas fa-book-open"></i>
+                    <a href="dashboard.php" class="logo">
+                        <i class="fas fa-gamepad"></i>
                         MagApp
                     </a>
                     <div class="search-bar">

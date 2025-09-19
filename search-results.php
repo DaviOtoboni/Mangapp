@@ -373,7 +373,7 @@ if (!empty($termo_pesquisa)) {
         <div class="container">
             <div class="navbar-content">
                 <div class="navbar-left">
-                    <a href="index-mangas.php" class="logo">
+                    <a href="dashboard.php" class="logo">
                         <i class="fas fa-book-open"></i>
                         MangApp
                     </a>

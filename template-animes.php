@@ -17,8 +17,8 @@
         <div class="container">
             <div class="navbar-content">
                 <div class="navbar-left">
-                    <a href="index-animes.php" class="logo">
-                        <i class="fas fa-book-open"></i>
+                    <a href="dashboard.php" class="logo">
+                    <i class="fas fa-tv"></i>
                         Magapp
                     </a>
                     <div class="search-bar">
@@ -126,7 +126,7 @@
                                 </a>
                             </div>
                         <?php else: ?>
-                            <i class="fas fa-book-open" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+                            <i class="fas fa-tv" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>
                             <h3 style="margin-bottom: 0.5rem; color: var(--text-primary);">Nenhum anime adicionado</h3>
                             <p>Comece adicionando seu primeiro anime!</p>
                             <div style="margin-top: 1rem;">
