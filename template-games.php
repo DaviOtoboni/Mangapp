@@ -465,24 +465,76 @@
                                     <span class="genre-label">Aventura</span>
                                 </label>
                                 <label class="genre-checkbox">
-                                    <input type="checkbox" name="generos[]" value="romance">
-                                    <span class="genre-label">Romance</span>
+                                    <input type="checkbox" name="generos[]" value="rpg">
+                                    <span class="genre-label">RPG</span>
                                 </label>
                                 <label class="genre-checkbox">
-                                    <input type="checkbox" name="generos[]" value="isekai">
-                                    <span class="genre-label">Isekai</span>
+                                    <input type="checkbox" name="generos[]" value="estratégia">
+                                    <span class="genre-label">Estratégia</span>
+                                </label>
+                                <label class="genre-checkbox">
+                                    <input type="checkbox" name="generos[]" value="simulação">
+                                    <span class="genre-label">Simulação</span>
+                                </label>
+                                <label class="genre-checkbox">
+                                    <input type="checkbox" name="generos[]" value="esportes">
+                                    <span class="genre-label">Esportes</span>
+                                </label>
+                                <label class="genre-checkbox">
+                                    <input type="checkbox" name="generos[]" value="corrida">
+                                    <span class="genre-label">Corrida</span>
+                                </label>
+                                <label class="genre-checkbox">
+                                    <input type="checkbox" name="generos[]" value="puzzle">
+                                    <span class="genre-label">Puzzle</span>
                                 </label>
                                 <label class="genre-checkbox">
                                     <input type="checkbox" name="generos[]" value="terror">
                                     <span class="genre-label">Terror</span>
                                 </label>
                                 <label class="genre-checkbox">
-                                    <input type="checkbox" name="generos[]" value="comédia">
-                                    <span class="genre-label">Comédia</span>
+                                    <input type="checkbox" name="generos[]" value="plataforma">
+                                    <span class="genre-label">Plataforma</span>
                                 </label>
                                 <label class="genre-checkbox">
-                                    <input type="checkbox" name="generos[]" value="drama">
-                                    <span class="genre-label">Drama</span>
+                                    <input type="checkbox" name="generos[]" value="luta">
+                                    <span class="genre-label">Luta</span>
+                                </label>
+                                <label class="genre-checkbox">
+                                    <input type="checkbox" name="generos[]" value="musical">
+                                    <span class="genre-label">Musical/Ritmo</span>
+                                </label>
+                                <label class="genre-checkbox">
+                                    <input type="checkbox" name="generos[]" value="mmorpg">
+                                    <span class="genre-label">MMORPG</span>
+                                </label>
+                                <label class="genre-checkbox">
+                                    <input type="checkbox" name="generos[]" value="moba">
+                                    <span class="genre-label">MOBA</span>
+                                </label>
+                                <label class="genre-checkbox">
+                                    <input type="checkbox" name="generos[]" value="battle royale">
+                                    <span class="genre-label">Battle Royale</span>
+                                </label>
+                                <label class="genre-checkbox">
+                                    <input type="checkbox" name="generos[]" value="roguelike">
+                                    <span class="genre-label">Roguelike</span>
+                                </label>
+                                <label class="genre-checkbox">
+                                    <input type="checkbox" name="generos[]" value="sandbox">
+                                    <span class="genre-label">Sandbox</span>
+                                </label>
+                                <label class="genre-checkbox">
+                                    <input type="checkbox" name="generos[]" value="survival">
+                                    <span class="genre-label">Survival</span>
+                                </label>
+                                <label class="genre-checkbox">
+                                    <input type="checkbox" name="generos[]" value="stealth">
+                                    <span class="genre-label">Stealth</span>
+                                </label>
+                                <label class="genre-checkbox">
+                                    <input type="checkbox" name="generos[]" value="visual novel">
+                                    <span class="genre-label">Visual Novel</span>
                                 </label>
                                 <label class="genre-checkbox">
                                     <input type="checkbox" name="generos[]" value="fantasia">
@@ -491,30 +543,6 @@
                                 <label class="genre-checkbox">
                                     <input type="checkbox" name="generos[]" value="ficção científica">
                                     <span class="genre-label">Ficção Científica</span>
-                                </label>
-                                <label class="genre-checkbox">
-                                    <input type="checkbox" name="generos[]" value="slice of life">
-                                    <span class="genre-label">Slice of Life</span>
-                                </label>
-                                <label class="genre-checkbox">
-                                    <input type="checkbox" name="generos[]" value="esportes">
-                                    <span class="genre-label">Esportes</span>
-                                </label>
-                                <label class="genre-checkbox">
-                                    <input type="checkbox" name="generos[]" value="supernatural">
-                                    <span class="genre-label">Supernatural</span>
-                                </label>
-                                <label class="genre-checkbox">
-                                    <input type="checkbox" name="generos[]" value="mystery">
-                                    <span class="genre-label">Mistério</span>
-                                </label>
-                                <label class="genre-checkbox">
-                                    <input type="checkbox" name="generos[]" value="psychological">
-                                    <span class="genre-label">Psicológico</span>
-                                </label>
-                                <label class="genre-checkbox">
-                                    <input type="checkbox" name="generos[]" value="historical">
-                                    <span class="genre-label">Histórico</span>
                                 </label>
                             </div>
                     </div>
@@ -596,24 +624,76 @@
                                     <span class="genre-label">Aventura</span>
                                 </label>
                                 <label class="genre-checkbox">
-                                    <input type="checkbox" name="generos[]" value="romance">
-                                    <span class="genre-label">Romance</span>
+                                    <input type="checkbox" name="generos[]" value="rpg">
+                                    <span class="genre-label">RPG</span>
                                 </label>
                                 <label class="genre-checkbox">
-                                    <input type="checkbox" name="generos[]" value="isekai">
-                                    <span class="genre-label">Isekai</span>
+                                    <input type="checkbox" name="generos[]" value="estratégia">
+                                    <span class="genre-label">Estratégia</span>
+                                </label>
+                                <label class="genre-checkbox">
+                                    <input type="checkbox" name="generos[]" value="simulação">
+                                    <span class="genre-label">Simulação</span>
+                                </label>
+                                <label class="genre-checkbox">
+                                    <input type="checkbox" name="generos[]" value="esportes">
+                                    <span class="genre-label">Esportes</span>
+                                </label>
+                                <label class="genre-checkbox">
+                                    <input type="checkbox" name="generos[]" value="corrida">
+                                    <span class="genre-label">Corrida</span>
+                                </label>
+                                <label class="genre-checkbox">
+                                    <input type="checkbox" name="generos[]" value="puzzle">
+                                    <span class="genre-label">Puzzle</span>
                                 </label>
                                 <label class="genre-checkbox">
                                     <input type="checkbox" name="generos[]" value="terror">
                                     <span class="genre-label">Terror</span>
                                 </label>
                                 <label class="genre-checkbox">
-                                    <input type="checkbox" name="generos[]" value="comédia">
-                                    <span class="genre-label">Comédia</span>
+                                    <input type="checkbox" name="generos[]" value="plataforma">
+                                    <span class="genre-label">Plataforma</span>
                                 </label>
                                 <label class="genre-checkbox">
-                                    <input type="checkbox" name="generos[]" value="drama">
-                                    <span class="genre-label">Drama</span>
+                                    <input type="checkbox" name="generos[]" value="luta">
+                                    <span class="genre-label">Luta</span>
+                                </label>
+                                <label class="genre-checkbox">
+                                    <input type="checkbox" name="generos[]" value="musical">
+                                    <span class="genre-label">Musical/Ritmo</span>
+                                </label>
+                                <label class="genre-checkbox">
+                                    <input type="checkbox" name="generos[]" value="mmorpg">
+                                    <span class="genre-label">MMORPG</span>
+                                </label>
+                                <label class="genre-checkbox">
+                                    <input type="checkbox" name="generos[]" value="moba">
+                                    <span class="genre-label">MOBA</span>
+                                </label>
+                                <label class="genre-checkbox">
+                                    <input type="checkbox" name="generos[]" value="battle royale">
+                                    <span class="genre-label">Battle Royale</span>
+                                </label>
+                                <label class="genre-checkbox">
+                                    <input type="checkbox" name="generos[]" value="roguelike">
+                                    <span class="genre-label">Roguelike</span>
+                                </label>
+                                <label class="genre-checkbox">
+                                    <input type="checkbox" name="generos[]" value="sandbox">
+                                    <span class="genre-label">Sandbox</span>
+                                </label>
+                                <label class="genre-checkbox">
+                                    <input type="checkbox" name="generos[]" value="survival">
+                                    <span class="genre-label">Survival</span>
+                                </label>
+                                <label class="genre-checkbox">
+                                    <input type="checkbox" name="generos[]" value="stealth">
+                                    <span class="genre-label">Stealth</span>
+                                </label>
+                                <label class="genre-checkbox">
+                                    <input type="checkbox" name="generos[]" value="visual novel">
+                                    <span class="genre-label">Visual Novel</span>
                                 </label>
                                 <label class="genre-checkbox">
                                     <input type="checkbox" name="generos[]" value="fantasia">
@@ -622,30 +702,6 @@
                                 <label class="genre-checkbox">
                                     <input type="checkbox" name="generos[]" value="ficção científica">
                                     <span class="genre-label">Ficção Científica</span>
-                                </label>
-                                <label class="genre-checkbox">
-                                    <input type="checkbox" name="generos[]" value="slice of life">
-                                    <span class="genre-label">Slice of Life</span>
-                                </label>
-                                <label class="genre-checkbox">
-                                    <input type="checkbox" name="generos[]" value="esportes">
-                                    <span class="genre-label">Esportes</span>
-                                </label>
-                                <label class="genre-checkbox">
-                                    <input type="checkbox" name="generos[]" value="supernatural">
-                                    <span class="genre-label">Supernatural</span>
-                                </label>
-                                <label class="genre-checkbox">
-                                    <input type="checkbox" name="generos[]" value="mystery">
-                                    <span class="genre-label">Mistério</span>
-                                </label>
-                                <label class="genre-checkbox">
-                                    <input type="checkbox" name="generos[]" value="psychological">
-                                    <span class="genre-label">Psicológico</span>
-                                </label>
-                                <label class="genre-checkbox">
-                                    <input type="checkbox" name="generos[]" value="historical">
-                                    <span class="genre-label">Histórico</span>
                                 </label>
                             </div>
                         </div>

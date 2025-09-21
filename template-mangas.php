@@ -493,8 +493,8 @@
                                     <span class="genre-label">Ficção Científica</span>
                                 </label>
                                 <label class="genre-checkbox">
-                                    <input type="checkbox" name="generos[]" value="slice of life">
-                                    <span class="genre-label">Slice of Life</span>
+                                    <input type="checkbox" name="generos[]" value="shonen">
+                                    <span class="genre-label">Shōnen</span>
                                 </label>
                                 <label class="genre-checkbox">
                                     <input type="checkbox" name="generos[]" value="esportes">
@@ -634,8 +634,8 @@
                                     <span class="genre-label">Ficção Científica</span>
                                 </label>
                                 <label class="genre-checkbox">
-                                    <input type="checkbox" name="generos[]" value="slice of life">
-                                    <span class="genre-label">Slice of Life</span>
+                                    <input type="checkbox" name="generos[]" value="shonen">
+                                    <span class="genre-label">Shōnen</span>
                                 </label>
                                 <label class="genre-checkbox">
                                     <input type="checkbox" name="generos[]" value="esportes">

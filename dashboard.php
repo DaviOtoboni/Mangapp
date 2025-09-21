@@ -123,7 +123,7 @@ $total_itens = $total_mangas + $total_animes + $total_jogos;
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - MangApp</title>
+    <title>Dashboard - MagApp</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles-mangas.css">
@@ -136,7 +136,7 @@ $total_itens = $total_mangas + $total_animes + $total_jogos;
                 <div class="navbar-left">
                     <a href="dashboard.php" class="logo">
                         <i class="fas fa-tachometer-alt"></i>
-                        MangApp
+                        MagApp
                     </a>
                     <div class="search-bar">
                         <i class="fas fa-search search-icon"></i>
@@ -168,7 +168,7 @@ $total_itens = $total_mangas + $total_animes + $total_jogos;
             <!-- Page Header -->
             <div class="page-header">
                 <h1 class="page-title">Dashboard</h1>
-                <p class="page-subtitle">Visão geral do seu progresso em seus mangás, animes e jogos</p>
+                <p class="page-subtitle">Gerencie o seu progresso com uma biblioteca de mangás, animes e jogos</p>
             </div>
 
             <!-- Metrics -->
@@ -196,7 +196,7 @@ $total_itens = $total_mangas + $total_animes + $total_jogos;
                 <!-- Mangás Recentes -->
                 <div class="dashboard-section" style="border-radius: 0.75rem;">
                     <div class="section-header">
-                        <div class="section-title">
+                        <div class="section-title" style="margin-bottom: 0rem;">
                             <i class="fas fa-book-open"></i>
                             <h3>Mangás Adicionados Recentemente</h3>
                         </div>
@@ -261,7 +261,7 @@ $total_itens = $total_mangas + $total_animes + $total_jogos;
                 <!-- Animes Recentes -->
                 <div class="dashboard-section" style="border-radius: 0.75rem;">
                     <div class="section-header">
-                        <div class="section-title">
+                        <div class="section-title" style="margin-bottom: 0rem;">
                             <i class="fas fa-tv"></i>
                             <h3>Animes Adicionados Recentemente</h3>
                         </div>
@@ -325,7 +325,7 @@ $total_itens = $total_mangas + $total_animes + $total_jogos;
                 <!-- Jogos Recentes -->
                 <div class="dashboard-section" style="border-radius: 0.75rem;">
                     <div class="section-header">
-                        <div class="section-title">
+                        <div class="section-title" style="margin-bottom: 0rem;">
                             <i class="fas fa-gamepad"></i>
                             <h3>Jogos Adicionados Recentemente</h3>
                         </div>
@@ -400,6 +400,10 @@ $total_itens = $total_mangas + $total_animes + $total_jogos;
             cursor: pointer;
         }
 
+        .btn:visited {
+            color:rgb(255, 255, 255);
+        }
+
         
         /* Dashboard specific styles */
         .dashboard-sections {
@@ -439,6 +443,7 @@ $total_itens = $total_mangas + $total_animes + $total_jogos;
             margin: 0;
             font-size: 1.25rem;
             font-weight: 600;
+            margin-bottom: 0rem;
         }
 
         .section-count {
@@ -565,6 +570,8 @@ $total_itens = $total_mangas + $total_animes + $total_jogos;
             margin-top: 1rem;
             text-align: center;
         }
+
+        
 
         .section-footer .btn {
             display: inline-flex;

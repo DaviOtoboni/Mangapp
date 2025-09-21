@@ -165,11 +165,16 @@ function openAddAnimeModal() {
             if (emLancamento) emLancamento.checked = false;
             if (finalizado) finalizado.checked = false;
             
-            // Set default value for total chapters
-            const totalCapitulos = document.getElementById('addCapitulosTotal');
-            if (totalCapitulos) {
-                totalCapitulos.value = '0';
-            }
+            // Set default values for new fields
+            const temporadasTotal = document.getElementById('addTemporadasTotal');
+            const temporadaAtual = document.getElementById('addTemporadaAtual');
+            const episodiosTotal = document.getElementById('addEpisodiosTotal');
+            const episodioAtual = document.getElementById('addEpisodioAtual');
+            
+            if (temporadasTotal) temporadasTotal.value = '0';
+            if (temporadaAtual) temporadaAtual.value = '0';
+            if (episodiosTotal) episodiosTotal.value = '0';
+            if (episodioAtual) episodioAtual.value = '0';
             
             // Reset required fields when opening modal
             toggleRequiredFields();
@@ -238,160 +243,238 @@ class ModalValidator {
     
     validateAddModal() {
         const emLancamentoCheckbox = document.getElementById('addEmLancamento');
-        const totalCapitulosField = document.getElementById('addCapitulosTotal');
-        const capituloAtualField = document.getElementById('addCapituloAtual');
+        const temporadasTotalField = document.getElementById('addTemporadasTotal');
+        const temporadaAtualField = document.getElementById('addTemporadaAtual');
+        const episodiosTotalField = document.getElementById('addEpisodiosTotal');
+        const episodioAtualField = document.getElementById('addEpisodioAtual');
         const statusField = document.getElementById('addStatus');
         
-        if (!emLancamentoCheckbox || !totalCapitulosField || !capituloAtualField || !statusField) {
+        if (!emLancamentoCheckbox || !temporadasTotalField || !temporadaAtualField || !episodiosTotalField || !episodioAtualField || !statusField) {
+            console.log('Elementos não encontrados:', {
+                emLancamentoCheckbox: !!emLancamentoCheckbox,
+                temporadasTotalField: !!temporadasTotalField,
+                temporadaAtualField: !!temporadaAtualField,
+                episodiosTotalField: !!episodiosTotalField,
+                episodioAtualField: !!episodioAtualField,
+                statusField: !!statusField
+            });
             return;
         }
         
         const emLancamento = emLancamentoCheckbox.checked;
         const status = statusField.value;
         
-        // Lógica para o campo "Total de Capítulos" (quando em lançamento)
+        // Lógica para o campo "Total de Temporadas" (quando em lançamento)
         if (emLancamento) {
             // Bloquear completamente o campo
-            totalCapitulosField.disabled = true;
-            totalCapitulosField.readOnly = true;
-            totalCapitulosField.value = '0';
-            totalCapitulosField.placeholder = '';
-            totalCapitulosField.removeAttribute('required');
-            totalCapitulosField.setAttribute('readonly', 'readonly');
-            totalCapitulosField.setAttribute('tabindex', '-1');
-            totalCapitulosField.setAttribute('aria-disabled', 'true');
-            totalCapitulosField.style.cssText = this.disabledStyle;
+            temporadasTotalField.disabled = true;
+            temporadasTotalField.readOnly = true;
+            temporadasTotalField.value = '0';
+            temporadasTotalField.placeholder = '';
+            temporadasTotalField.removeAttribute('required');
+            temporadasTotalField.setAttribute('readonly', 'readonly');
+            temporadasTotalField.setAttribute('tabindex', '-1');
+            temporadasTotalField.setAttribute('aria-disabled', 'true');
+            temporadasTotalField.style.cssText = this.disabledStyle;
             
             // Adicionar classe CSS para bloqueio visual
-            totalCapitulosField.classList.add('field-blocked');
+            temporadasTotalField.classList.add('field-blocked');
         } else {
             // Desbloquear o campo
-            totalCapitulosField.disabled = false;
-            totalCapitulosField.readOnly = false;
-            totalCapitulosField.placeholder = 'Ex: 100';
-            totalCapitulosField.removeAttribute('required');
-            totalCapitulosField.removeAttribute('readonly');
-            totalCapitulosField.removeAttribute('tabindex');
-            totalCapitulosField.removeAttribute('aria-disabled');
-            totalCapitulosField.style.cssText = '';
-            totalCapitulosField.classList.remove('field-blocked');
+            temporadasTotalField.disabled = false;
+            temporadasTotalField.readOnly = false;
+            temporadasTotalField.placeholder = 'Ex: 3';
+            temporadasTotalField.removeAttribute('required');
+            temporadasTotalField.removeAttribute('readonly');
+            temporadasTotalField.removeAttribute('tabindex');
+            temporadasTotalField.removeAttribute('aria-disabled');
+            temporadasTotalField.style.cssText = '';
+            temporadasTotalField.classList.remove('field-blocked');
             
-            if (!totalCapitulosField.value) {
-                totalCapitulosField.value = '0';
+            if (!temporadasTotalField.value) {
+                temporadasTotalField.value = '0';
             }
         }
         
-        // Lógica para o campo "Capítulo Atual" (quando status for completado)
+        // Lógica para o campo "Temporada Atual" (quando status for completado)
         if (status === 'completado') {
-            // Bloquear completamente o campo
-            capituloAtualField.disabled = true;
-            capituloAtualField.readOnly = true;
-            capituloAtualField.value = totalCapitulosField.value || '0';
-            capituloAtualField.placeholder = '';
-            capituloAtualField.removeAttribute('required');
-            capituloAtualField.setAttribute('readonly', 'readonly');
-            capituloAtualField.setAttribute('tabindex', '-1');
-            capituloAtualField.setAttribute('aria-disabled', 'true');
-            capituloAtualField.style.cssText = this.disabledStyle;
+            // Bloquear completamente o campo e replicar valor de total de temporadas
+            temporadaAtualField.disabled = true;
+            temporadaAtualField.readOnly = true;
+            temporadaAtualField.value = temporadasTotalField.value || '0';
+            temporadaAtualField.placeholder = '';
+            temporadaAtualField.removeAttribute('required');
+            temporadaAtualField.setAttribute('readonly', 'readonly');
+            temporadaAtualField.setAttribute('tabindex', '-1');
+            temporadaAtualField.setAttribute('aria-disabled', 'true');
+            temporadaAtualField.style.cssText = this.disabledStyle;
             
             // Adicionar classe CSS para bloqueio visual
-            capituloAtualField.classList.add('field-blocked');
+            temporadaAtualField.classList.add('field-blocked');
         } else {
             // Desbloquear o campo
-            capituloAtualField.disabled = false;
-            capituloAtualField.readOnly = false;
-            capituloAtualField.placeholder = 'Ex: 10';
-            capituloAtualField.removeAttribute('required');
-            capituloAtualField.removeAttribute('readonly');
-            capituloAtualField.removeAttribute('tabindex');
-            capituloAtualField.removeAttribute('aria-disabled');
-            capituloAtualField.style.cssText = '';
-            capituloAtualField.classList.remove('field-blocked');
+            temporadaAtualField.disabled = false;
+            temporadaAtualField.readOnly = false;
+            temporadaAtualField.placeholder = 'Ex: 2';
+            temporadaAtualField.removeAttribute('required');
+            temporadaAtualField.removeAttribute('readonly');
+            temporadaAtualField.removeAttribute('tabindex');
+            temporadaAtualField.removeAttribute('aria-disabled');
+            temporadaAtualField.style.cssText = '';
+            temporadaAtualField.classList.remove('field-blocked');
+        }
+        
+        // Lógica para o campo "Episódio Atual" (quando status for completado)
+        if (status === 'completado') {
+            // Bloquear completamente o campo e replicar valor de total de episódios
+            episodioAtualField.disabled = true;
+            episodioAtualField.readOnly = true;
+            episodioAtualField.value = episodiosTotalField.value || '0';
+            episodioAtualField.placeholder = '';
+            episodioAtualField.removeAttribute('required');
+            episodioAtualField.setAttribute('readonly', 'readonly');
+            episodioAtualField.setAttribute('tabindex', '-1');
+            episodioAtualField.setAttribute('aria-disabled', 'true');
+            episodioAtualField.style.cssText = this.disabledStyle;
+            
+            // Adicionar classe CSS para bloqueio visual
+            episodioAtualField.classList.add('field-blocked');
+        } else {
+            // Desbloquear o campo
+            episodioAtualField.disabled = false;
+            episodioAtualField.readOnly = false;
+            episodioAtualField.placeholder = 'Ex: 10';
+            episodioAtualField.removeAttribute('required');
+            episodioAtualField.removeAttribute('readonly');
+            episodioAtualField.removeAttribute('tabindex');
+            episodioAtualField.removeAttribute('aria-disabled');
+            episodioAtualField.style.cssText = '';
+            episodioAtualField.classList.remove('field-blocked');
         }
         
         console.log('validateAddModal executada - Em lançamento:', emLancamento, 
                    'Status:', status,
-                   'Total capítulos desabilitado:', totalCapitulosField.disabled,
-                   'Capítulo atual desabilitado:', capituloAtualField.disabled);
+                   'Total temporadas desabilitado:', temporadasTotalField.disabled,
+                   'Temporada atual desabilitado:', temporadaAtualField.disabled,
+                   'Episódio atual desabilitado:', episodioAtualField.disabled);
     }
     
     validateEditModal() {
         const emLancamentoCheckbox = document.getElementById('editEmLancamento');
-        const totalCapitulosField = document.getElementById('editCapitulosTotal');
-        const capituloAtualField = document.getElementById('editCapituloAtual');
+        const temporadasTotalField = document.getElementById('editTemporadasTotal');
+        const temporadaAtualField = document.getElementById('editTemporadaAtual');
+        const episodiosTotalField = document.getElementById('editEpisodiosTotal');
+        const episodioAtualField = document.getElementById('editEpisodioAtual');
         const statusField = document.getElementById('editStatus');
         
-        if (!emLancamentoCheckbox || !totalCapitulosField || !capituloAtualField || !statusField) {
+        if (!emLancamentoCheckbox || !temporadasTotalField || !temporadaAtualField || !episodiosTotalField || !episodioAtualField || !statusField) {
+            console.log('Elementos não encontrados no edit modal:', {
+                emLancamentoCheckbox: !!emLancamentoCheckbox,
+                temporadasTotalField: !!temporadasTotalField,
+                temporadaAtualField: !!temporadaAtualField,
+                episodiosTotalField: !!episodiosTotalField,
+                episodioAtualField: !!episodioAtualField,
+                statusField: !!statusField
+            });
             return;
         }
         
         const emLancamento = emLancamentoCheckbox.checked;
         const status = statusField.value;
         
-        // Lógica para o campo "Total de Capítulos" (quando em lançamento)
+        // Lógica para o campo "Total de Temporadas" (quando em lançamento)
         if (emLancamento) {
             // Bloquear completamente o campo
-            totalCapitulosField.disabled = true;
-            totalCapitulosField.readOnly = true;
-            totalCapitulosField.value = '0';
-            totalCapitulosField.placeholder = '';
-            totalCapitulosField.removeAttribute('required');
-            totalCapitulosField.setAttribute('readonly', 'readonly');
-            totalCapitulosField.setAttribute('tabindex', '-1');
-            totalCapitulosField.setAttribute('aria-disabled', 'true');
-            totalCapitulosField.style.cssText = this.disabledStyle;
+            temporadasTotalField.disabled = true;
+            temporadasTotalField.readOnly = true;
+            temporadasTotalField.value = '0';
+            temporadasTotalField.placeholder = '';
+            temporadasTotalField.removeAttribute('required');
+            temporadasTotalField.setAttribute('readonly', 'readonly');
+            temporadasTotalField.setAttribute('tabindex', '-1');
+            temporadasTotalField.setAttribute('aria-disabled', 'true');
+            temporadasTotalField.style.cssText = this.disabledStyle;
             
             // Adicionar classe CSS para bloqueio visual
-            totalCapitulosField.classList.add('field-blocked');
+            temporadasTotalField.classList.add('field-blocked');
         } else {
             // Desbloquear o campo
-            totalCapitulosField.disabled = false;
-            totalCapitulosField.readOnly = false;
-            totalCapitulosField.placeholder = 'Ex: 100';
-            totalCapitulosField.removeAttribute('required');
-            totalCapitulosField.removeAttribute('readonly');
-            totalCapitulosField.removeAttribute('tabindex');
-            totalCapitulosField.removeAttribute('aria-disabled');
-            totalCapitulosField.style.cssText = '';
-            totalCapitulosField.classList.remove('field-blocked');
+            temporadasTotalField.disabled = false;
+            temporadasTotalField.readOnly = false;
+            temporadasTotalField.placeholder = 'Ex: 3';
+            temporadasTotalField.removeAttribute('required');
+            temporadasTotalField.removeAttribute('readonly');
+            temporadasTotalField.removeAttribute('tabindex');
+            temporadasTotalField.removeAttribute('aria-disabled');
+            temporadasTotalField.style.cssText = '';
+            temporadasTotalField.classList.remove('field-blocked');
             
-            if (!totalCapitulosField.value) {
-                totalCapitulosField.value = '0';
+            if (!temporadasTotalField.value) {
+                temporadasTotalField.value = '0';
             }
         }
         
-        // Lógica para o campo "Capítulo Atual" (quando status for completado)
+        // Lógica para o campo "Temporada Atual" (quando status for completado)
         if (status === 'completado') {
-            // Bloquear completamente o campo
-            capituloAtualField.disabled = true;
-            capituloAtualField.readOnly = true;
-            capituloAtualField.value = totalCapitulosField.value || '0';
-            capituloAtualField.placeholder = '';
-            capituloAtualField.removeAttribute('required');
-            capituloAtualField.setAttribute('readonly', 'readonly');
-            capituloAtualField.setAttribute('tabindex', '-1');
-            capituloAtualField.setAttribute('aria-disabled', 'true');
-            capituloAtualField.style.cssText = this.disabledStyle;
+            // Bloquear completamente o campo e replicar valor de total de temporadas
+            temporadaAtualField.disabled = true;
+            temporadaAtualField.readOnly = true;
+            temporadaAtualField.value = temporadasTotalField.value || '0';
+            temporadaAtualField.placeholder = '';
+            temporadaAtualField.removeAttribute('required');
+            temporadaAtualField.setAttribute('readonly', 'readonly');
+            temporadaAtualField.setAttribute('tabindex', '-1');
+            temporadaAtualField.setAttribute('aria-disabled', 'true');
+            temporadaAtualField.style.cssText = this.disabledStyle;
             
             // Adicionar classe CSS para bloqueio visual
-            capituloAtualField.classList.add('field-blocked');
+            temporadaAtualField.classList.add('field-blocked');
         } else {
             // Desbloquear o campo
-            capituloAtualField.disabled = false;
-            capituloAtualField.readOnly = false;
-            capituloAtualField.placeholder = 'Ex: 10';
-            capituloAtualField.removeAttribute('required');
-            capituloAtualField.removeAttribute('readonly');
-            capituloAtualField.removeAttribute('tabindex');
-            capituloAtualField.removeAttribute('aria-disabled');
-            capituloAtualField.style.cssText = '';
-            capituloAtualField.classList.remove('field-blocked');
+            temporadaAtualField.disabled = false;
+            temporadaAtualField.readOnly = false;
+            temporadaAtualField.placeholder = 'Ex: 2';
+            temporadaAtualField.removeAttribute('required');
+            temporadaAtualField.removeAttribute('readonly');
+            temporadaAtualField.removeAttribute('tabindex');
+            temporadaAtualField.removeAttribute('aria-disabled');
+            temporadaAtualField.style.cssText = '';
+            temporadaAtualField.classList.remove('field-blocked');
+        }
+        
+        // Lógica para o campo "Episódio Atual" (quando status for completado)
+        if (status === 'completado') {
+            // Bloquear completamente o campo e replicar valor de total de episódios
+            episodioAtualField.disabled = true;
+            episodioAtualField.readOnly = true;
+            episodioAtualField.value = episodiosTotalField.value || '0';
+            episodioAtualField.placeholder = '';
+            episodioAtualField.removeAttribute('required');
+            episodioAtualField.setAttribute('readonly', 'readonly');
+            episodioAtualField.setAttribute('tabindex', '-1');
+            episodioAtualField.setAttribute('aria-disabled', 'true');
+            episodioAtualField.style.cssText = this.disabledStyle;
+            
+            // Adicionar classe CSS para bloqueio visual
+            episodioAtualField.classList.add('field-blocked');
+        } else {
+            // Desbloquear o campo
+            episodioAtualField.disabled = false;
+            episodioAtualField.readOnly = false;
+            episodioAtualField.placeholder = 'Ex: 10';
+            episodioAtualField.removeAttribute('required');
+            episodioAtualField.removeAttribute('readonly');
+            episodioAtualField.removeAttribute('tabindex');
+            episodioAtualField.removeAttribute('aria-disabled');
+            episodioAtualField.style.cssText = '';
+            episodioAtualField.classList.remove('field-blocked');
         }
         
         console.log('validateEditModal executada - Em lançamento:', emLancamento, 
                    'Status:', status,
-                   'Total capítulos desabilitado:', totalCapitulosField.disabled,
-                   'Capítulo atual desabilitado:', capituloAtualField.disabled);
+                   'Total temporadas desabilitado:', temporadasTotalField.disabled,
+                   'Temporada atual desabilitado:', temporadaAtualField.disabled,
+                   'Episódio atual desabilitado:', episodioAtualField.disabled);
     }
 }
 
@@ -400,16 +483,74 @@ const modalValidator = new ModalValidator();
 
 // Function to toggle required fields based on status and em_lancamento
 function toggleRequiredFields() {
-    try {
-        modalValidator.validateAddModal();
+    console.log('🚀 FUNÇÃO toggleRequiredFields EXECUTADA!');
+    
+    // Aguardar um pouco para garantir que o DOM foi atualizado
+    setTimeout(() => {
+        const statusField = document.getElementById('addStatus');
+        const temporadaAtualField = document.getElementById('addTemporadaAtual');
+        const episodioAtualField = document.getElementById('addEpisodioAtual');
+        const temporadasTotalField = document.getElementById('addTemporadasTotal');
+        const episodiosTotalField = document.getElementById('addEpisodiosTotal');
         
-        // Force update after a small delay to ensure DOM is ready
-        setTimeout(() => {
-            modalValidator.validateAddModal();
-        }, 10);
-    } catch (error) {
-        console.error('Erro na validação do modal de adicionar:', error);
-    }
+        console.log('🔍 VERIFICANDO ELEMENTOS:');
+        console.log('- Status Field:', statusField);
+        console.log('- Temporada Atual Field:', temporadaAtualField);
+        console.log('- Episódio Atual Field:', episodioAtualField);
+        console.log('- Temporadas Total Field:', temporadasTotalField);
+        console.log('- Episódios Total Field:', episodiosTotalField);
+        
+        if (statusField) {
+            const statusValue = statusField.value;
+            console.log('📊 STATUS ATUAL:', statusValue);
+            
+            if (statusValue === 'completado') {
+                console.log('✅ BLOQUEANDO CAMPOS - Status é COMPLETADO');
+                
+                // BLOQUEAR TEMPORADA ATUAL
+                if (temporadaAtualField) {
+                    temporadaAtualField.disabled = true;
+                    temporadaAtualField.readOnly = true;
+                    temporadaAtualField.value = temporadasTotalField ? temporadasTotalField.value || '0' : '0';
+                    temporadaAtualField.style.cssText = 'background-color: #333 !important; color: #666 !important; cursor: not-allowed !important; opacity: 0.7 !important;';
+                    console.log('🔒 TEMPORADA ATUAL BLOQUEADA - Valor:', temporadaAtualField.value);
+                } else {
+                    console.log('❌ TEMPORADA ATUAL FIELD NÃO ENCONTRADO!');
+                }
+                
+                // BLOQUEAR EPISÓDIO ATUAL
+                if (episodioAtualField) {
+                    episodioAtualField.disabled = true;
+                    episodioAtualField.readOnly = true;
+                    episodioAtualField.value = episodiosTotalField ? episodiosTotalField.value || '0' : '0';
+                    episodioAtualField.style.cssText = 'background-color: #333 !important; color: #666 !important; cursor: not-allowed !important; opacity: 0.7 !important;';
+                    console.log('🔒 EPISÓDIO ATUAL BLOQUEADO - Valor:', episodioAtualField.value);
+                } else {
+                    console.log('❌ EPISÓDIO ATUAL FIELD NÃO ENCONTRADO!');
+                }
+            } else {
+                console.log('❌ DESBLOQUEANDO CAMPOS - Status não é completado');
+                
+                // DESBLOQUEAR TEMPORADA ATUAL
+                if (temporadaAtualField) {
+                    temporadaAtualField.disabled = false;
+                    temporadaAtualField.readOnly = false;
+                    temporadaAtualField.style.cssText = '';
+                    console.log('🔓 TEMPORADA ATUAL DESBLOQUEADA');
+                }
+                
+                // DESBLOQUEAR EPISÓDIO ATUAL
+                if (episodioAtualField) {
+                    episodioAtualField.disabled = false;
+                    episodioAtualField.readOnly = false;
+                    episodioAtualField.style.cssText = '';
+                    console.log('🔓 EPISÓDIO ATUAL DESBLOQUEADO');
+                }
+            }
+        } else {
+            console.log('❌ STATUS FIELD NÃO ENCONTRADO!');
+        }
+    }, 100);
 }
 
 // Function to toggle required fields in edit modal
@@ -418,6 +559,23 @@ function toggleEditRequiredFields() {
         modalValidator.validateEditModal();
     } catch (error) {
         console.error('Erro na validação do modal de edição:', error);
+    }
+}
+
+// Função de teste para verificar se o bloqueio está funcionando
+function testarBloqueio() {
+    console.log('🧪 TESTE MANUAL INICIADO');
+    
+    // Forçar status para completado
+    const statusField = document.getElementById('addStatus');
+    if (statusField) {
+        statusField.value = 'completado';
+        console.log('✅ Status forçado para completado');
+        
+        // Chamar a função de toggle
+        toggleRequiredFields();
+    } else {
+        console.log('❌ Status field não encontrado!');
     }
 }
 
@@ -442,8 +600,10 @@ function openEditModal(animeId) {
         modalValidator.validateElement('editId', el => el.value = anime.id);
         modalValidator.validateElement('editNome', el => el.value = anime.nome);
         modalValidator.validateElement('editStatus', el => el.value = anime.status);
-        modalValidator.validateElement('editCapitulosTotal', el => el.value = anime.capitulos_total);
-        modalValidator.validateElement('editCapituloAtual', el => el.value = anime.capitulo_atual);
+        modalValidator.validateElement('editTemporadasTotal', el => el.value = anime.temporadas_total || 0);
+        modalValidator.validateElement('editTemporadaAtual', el => el.value = anime.temporada_atual || 0);
+        modalValidator.validateElement('editEpisodiosTotal', el => el.value = anime.episodios_total || 0);
+        modalValidator.validateElement('editEpisodioAtual', el => el.value = anime.episodio_atual || 0);
         // Preencher gêneros múltiplos (checkboxes)
         const editGenerosCheckboxes = document.querySelectorAll('#editModal input[name="generos[]"]');
         if (editGenerosCheckboxes.length > 0) {
@@ -1251,31 +1411,31 @@ function toggleMutuallyExclusive(currentCheckbox, otherCheckboxId) {
 
 // Function to handle em_lancamento checkbox change
 function handleEmLancamentoChange(checkbox) {
-    const field = document.getElementById('addCapitulosTotal');
+    const temporadasField = document.getElementById('addTemporadasTotal');
     const finalizado = document.getElementById('addFinalizado');
     
     if (checkbox.checked) {
-        field.disabled = true;
-        field.readOnly = true;
-        field.value = '0';
-        field.placeholder = '';
-        field.style.backgroundColor = '#333';
-        field.style.color = '#666';
-        field.style.setProperty('cursor', 'not-allowed', 'important');
-        field.style.opacity = '0.7';
-        field.classList.add('field-blocked');
+        temporadasField.disabled = true;
+        temporadasField.readOnly = true;
+        temporadasField.value = '0';
+        temporadasField.placeholder = '';
+        temporadasField.style.backgroundColor = '#333';
+        temporadasField.style.color = '#666';
+        temporadasField.style.setProperty('cursor', 'not-allowed', 'important');
+        temporadasField.style.opacity = '0.7';
+        temporadasField.classList.add('field-blocked');
         if (finalizado) finalizado.checked = false;
-        console.log('✅ Campo BLOQUEADO');
+        console.log('✅ Campo Total de Temporadas BLOQUEADO');
     } else {
-        field.disabled = false;
-        field.readOnly = false;
-        field.placeholder = 'Ex: 100';
-        field.style.backgroundColor = '';
-        field.style.color = '';
-        field.style.cursor = '';
-        field.style.opacity = '';
-        field.classList.remove('field-blocked');
-        console.log('✅ Campo DESBLOQUEADO');
+        temporadasField.disabled = false;
+        temporadasField.readOnly = false;
+        temporadasField.placeholder = 'Ex: 3';
+        temporadasField.style.backgroundColor = '';
+        temporadasField.style.color = '';
+        temporadasField.style.cursor = '';
+        temporadasField.style.opacity = '';
+        temporadasField.classList.remove('field-blocked');
+        console.log('✅ Campo Total de Temporadas DESBLOQUEADO');
     }
     
     // Chama a função de validação para aplicar a classe field-blocked
@@ -1286,45 +1446,34 @@ function handleEmLancamentoChange(checkbox) {
 
 // Function to handle edit em_lancamento checkbox change
 function handleEditEmLancamentoChange(checkbox) {
-    const field = document.getElementById('editCapitulosTotal');
-    const capituloAtualField = document.getElementById('editCapituloAtual');
+    const temporadasField = document.getElementById('editTemporadasTotal');
     const finalizado = document.getElementById('editFinalizado');
     
     if (checkbox.checked) {
-        // Bloqueia o campo 'Total de Capítulos'
-        field.disabled = true;
-        field.readOnly = true;
-        field.value = '0';
-        field.placeholder = '';
-        field.style.backgroundColor = '#333';
-        field.style.color = '#666';
-        field.style.setProperty('cursor', 'not-allowed', 'important');
-        field.style.opacity = '0.7';
-        field.classList.add('field-blocked');
-        
-        // Desbloqueia o campo 'Capítulo Atual' (caso estivesse bloqueado)
-        capituloAtualField.disabled = false;
-        capituloAtualField.readOnly = false;
-        capituloAtualField.placeholder = 'Ex: 10';
-        capituloAtualField.style.backgroundColor = '';
-        capituloAtualField.style.color = '';
-        capituloAtualField.style.cursor = '';
-        capituloAtualField.style.opacity = '';
-        capituloAtualField.classList.remove('field-blocked');
+        // Bloqueia o campo 'Total de Temporadas'
+        temporadasField.disabled = true;
+        temporadasField.readOnly = true;
+        temporadasField.value = '0';
+        temporadasField.placeholder = '';
+        temporadasField.style.backgroundColor = '#333';
+        temporadasField.style.color = '#666';
+        temporadasField.style.setProperty('cursor', 'not-allowed', 'important');
+        temporadasField.style.opacity = '0.7';
+        temporadasField.classList.add('field-blocked');
         
         if (finalizado) finalizado.checked = false;
-        console.log('✅ Campo Total de Capítulos BLOQUEADO, Capítulo Atual DESBLOQUEADO');
+        console.log('✅ Campo Total de Temporadas BLOQUEADO');
     } else {
-        // Desbloqueia o campo 'Total de Capítulos'
-        field.disabled = false;
-        field.readOnly = false;
-        field.placeholder = 'Ex: 100';
-        field.style.backgroundColor = '';
-        field.style.color = '';
-        field.style.cursor = '';
-        field.style.opacity = '';
-        field.classList.remove('field-blocked');
-        console.log('✅ Campo Total de Capítulos DESBLOQUEADO');
+        // Desbloqueia o campo 'Total de Temporadas'
+        temporadasField.disabled = false;
+        temporadasField.readOnly = false;
+        temporadasField.placeholder = 'Ex: 3';
+        temporadasField.style.backgroundColor = '';
+        temporadasField.style.color = '';
+        temporadasField.style.cursor = '';
+        temporadasField.style.opacity = '';
+        temporadasField.classList.remove('field-blocked');
+        console.log('✅ Campo Total de Temporadas DESBLOQUEADO');
     }
     
     // Chama a função de validação
@@ -1547,6 +1696,13 @@ window.handleEmLancamentoChange = handleEmLancamentoChange;
 window.handleEditEmLancamentoChange = handleEditEmLancamentoChange;
 window.handleFinalizadoChange = handleFinalizadoChange;
 window.handleEditFinalizadoChange = handleEditFinalizadoChange;
+window.toggleRequiredFields = toggleRequiredFields;
+window.testarBloqueio = testarBloqueio;
+
+// Debug: verificar se as funções estão disponíveis
+console.log('🔧 FUNÇÕES DISPONÍVEIS:');
+console.log('- toggleRequiredFields:', typeof toggleRequiredFields);
+console.log('- testarBloqueio:', typeof testarBloqueio);
 
 // Test function availability
 function testFunctionAvailability() {

@@ -61,7 +61,7 @@
                     <div class="metric-label">Total</div>
                 </div>
                 <div class="metric-card lendo">
-                    <div class="metric-value"><?php echo $animes_lendo; ?></div>
+                    <div class="metric-value"><?php echo $animes_assistindo; ?></div>
                     <div class="metric-label">Lendo</div>
                 </div>
                 <div class="metric-card pretendo">
@@ -434,30 +434,73 @@
 
                         <div class="form-group">
                             <label class="form-label">Total de Temporadas</label>
-                            <input type="number" name="capitulos_total" id="addCapitulosTotal" class="form-input" min="0" value="0">
+                            <input type="number" name="temporadas_total" id="addTemporadasTotal" class="form-input" min="0" value="0">
                         </div>
 
                         <div class="form-group">
                             <label class="form-label">Temporada Atual</label>
-                            <input type="number" name="capitulos_total" id="addCapitulosTotal" class="form-input" min="0" value="0">
+                            <input type="number" name="temporada_atual" id="addTemporadaAtual" class="form-input" min="0" value="0">
                         </div>
                         
                         <div class="form-group">
                             <label class="form-label">Total de Episódios</label>
-                            <input type="number" name="capitulos_total" id="addCapitulosTotal" class="form-input" min="0" value="0">
+                            <input type="number" name="episodios_total" id="addEpisodiosTotal" class="form-input" min="0" value="0">
                         </div>
                         
                         <div class="form-group">
                             <label class="form-label">Episódio Atual</label>
-                            <input type="number" name="capitulo_atual" id="addCapituloAtual" class="form-input" min="0" value="0">
+                            <input type="number" name="episodio_atual" id="addEpisodioAtual" class="form-input" min="0" value="0">
                         </div>
                         
                         <div class="form-group">
                             <label class="form-label">Status *</label>
-                            <select name="status" id="addStatus" class="form-select" required onchange="toggleRequiredFields()">
+                            <select name="status" id="addStatus" class="form-select" required onchange="
+                                console.log('🔄 STATUS MUDOU PARA:', this.value);
+                                
+                                const temporadaAtualField = document.getElementById('addTemporadaAtual');
+                                const episodioAtualField = document.getElementById('addEpisodioAtual');
+                                const temporadasTotalField = document.getElementById('addTemporadasTotal');
+                                const episodiosTotalField = document.getElementById('addEpisodiosTotal');
+                                
+                                if (this.value === 'completado') {
+                                    console.log('✅ BLOQUEANDO CAMPOS - Status é COMPLETADO');
+                                    
+                                    if (temporadaAtualField) {
+                                        temporadaAtualField.disabled = true;
+                                        temporadaAtualField.readOnly = true;
+                                        temporadaAtualField.value = temporadasTotalField ? temporadasTotalField.value || '0' : '0';
+                                        temporadaAtualField.classList.add('field-blocked');
+                                        console.log('🔒 TEMPORADA ATUAL BLOQUEADA - Valor:', temporadaAtualField.value);
+                                    }
+                                    
+                                    if (episodioAtualField) {
+                                        episodioAtualField.disabled = true;
+                                        episodioAtualField.readOnly = true;
+                                        episodioAtualField.value = episodiosTotalField ? episodiosTotalField.value || '0' : '0';
+                                        episodioAtualField.classList.add('field-blocked');
+                                        console.log('🔒 EPISÓDIO ATUAL BLOQUEADO - Valor:', episodioAtualField.value);
+                                    }
+                                } else {
+                                    console.log('❌ DESBLOQUEANDO CAMPOS - Status não é completado');
+                                    
+                                    if (temporadaAtualField) {
+                                        temporadaAtualField.disabled = false;
+                                        temporadaAtualField.readOnly = false;
+                                        temporadaAtualField.classList.remove('field-blocked');
+                                        console.log('🔓 TEMPORADA ATUAL DESBLOQUEADA');
+                                    }
+                                    
+                                    if (episodioAtualField) {
+                                        episodioAtualField.disabled = false;
+                                        episodioAtualField.readOnly = false;
+                                        episodioAtualField.classList.remove('field-blocked');
+                                        console.log('🔓 EPISÓDIO ATUAL DESBLOQUEADO');
+                                    }
+                                }
+                            ">
                                 <option value="">Selecione...</option>
-                                <option value="lendo">Lendo</option>
-                                <option value="pretendo">Pretendo Ler</option>
+                                <option value="assistindo">Assistindo</option>
+                                <option value="pretendo">Pretendo Assistir</option>
                                 <option value="abandonado">Abandonado</option>
                                 <option value="completado">Completado</option>
                             </select>
@@ -503,8 +546,8 @@
                                     <span class="genre-label">Ficção Científica</span>
                                 </label>
                                 <label class="genre-checkbox">
-                                    <input type="checkbox" name="generos[]" value="slice of life">
-                                    <span class="genre-label">Slice of Life</span>
+                                    <input type="checkbox" name="generos[]" value="shonen">
+                                    <span class="genre-label">Shōnen</span>
                                 </label>
                                 <label class="genre-checkbox">
                                     <input type="checkbox" name="generos[]" value="esportes">
@@ -585,20 +628,73 @@
                     </div>
                         
                         <div class="form-group">
-                            <label class="form-label">Total de Capítulos</label>
-                            <input type="number" name="capitulos_total" id="editCapitulosTotal" class="form-input" min="0" value="0">
+                            <label class="form-label">Total de Temporadas</label>
+                            <input type="number" name="temporadas_total" id="editTemporadasTotal" class="form-input" min="0" value="0">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Temporada Atual</label>
+                            <input type="number" name="temporada_atual" id="editTemporadaAtual" class="form-input" min="0" value="0">
                         </div>
                         
                         <div class="form-group">
-                            <label class="form-label">Capítulo Atual</label>
-                            <input type="number" name="capitulo_atual" id="editCapituloAtual" class="form-input" min="0" value="0">
+                            <label class="form-label">Total de Episódios</label>
+                            <input type="number" name="episodios_total" id="editEpisodiosTotal" class="form-input" min="0" value="0">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Episódio Atual</label>
+                            <input type="number" name="episodio_atual" id="editEpisodioAtual" class="form-input" min="0" value="0">
                         </div>
                         
                         <div class="form-group">
                             <label class="form-label">Status *</label>
-                            <select name="status" id="editStatus" class="form-select" required onchange="toggleEditRequiredFields()">
-                                <option value="lendo">Lendo</option>
-                                <option value="pretendo">Pretendo Ler</option>
+                            <select name="status" id="editStatus" class="form-select" required onchange="
+                                console.log('🔄 STATUS EDIT MUDOU PARA:', this.value);
+                                
+                                const temporadaAtualField = document.getElementById('editTemporadaAtual');
+                                const episodioAtualField = document.getElementById('editEpisodioAtual');
+                                const temporadasTotalField = document.getElementById('editTemporadasTotal');
+                                const episodiosTotalField = document.getElementById('editEpisodiosTotal');
+                                
+                                if (this.value === 'completado') {
+                                    console.log('✅ BLOQUEANDO CAMPOS EDIT - Status é COMPLETADO');
+                                    
+                                    if (temporadaAtualField) {
+                                        temporadaAtualField.disabled = true;
+                                        temporadaAtualField.readOnly = true;
+                                        temporadaAtualField.value = temporadasTotalField ? temporadasTotalField.value || '0' : '0';
+                                        temporadaAtualField.classList.add('field-blocked');
+                                        console.log('🔒 TEMPORADA ATUAL EDIT BLOQUEADA - Valor:', temporadaAtualField.value);
+                                    }
+                                    
+                                    if (episodioAtualField) {
+                                        episodioAtualField.disabled = true;
+                                        episodioAtualField.readOnly = true;
+                                        episodioAtualField.value = episodiosTotalField ? episodiosTotalField.value || '0' : '0';
+                                        episodioAtualField.classList.add('field-blocked');
+                                        console.log('🔒 EPISÓDIO ATUAL EDIT BLOQUEADO - Valor:', episodioAtualField.value);
+                                    }
+                                } else {
+                                    console.log('❌ DESBLOQUEANDO CAMPOS EDIT - Status não é completado');
+                                    
+                                    if (temporadaAtualField) {
+                                        temporadaAtualField.disabled = false;
+                                        temporadaAtualField.readOnly = false;
+                                        temporadaAtualField.classList.remove('field-blocked');
+                                        console.log('🔓 TEMPORADA ATUAL EDIT DESBLOQUEADA');
+                                    }
+                                    
+                                    if (episodioAtualField) {
+                                        episodioAtualField.disabled = false;
+                                        episodioAtualField.readOnly = false;
+                                        episodioAtualField.classList.remove('field-blocked');
+                                        console.log('🔓 EPISÓDIO ATUAL EDIT DESBLOQUEADO');
+                                    }
+                                }
+                            ">
+                                <option value="assistindo">Assistindo</option>
+                                <option value="pretendo">Pretendo Assistir</option>
                                 <option value="abandonado">Abandonado</option>
                                 <option value="completado">Completado</option>
                             </select>
@@ -644,8 +740,8 @@
                                     <span class="genre-label">Ficção Científica</span>
                                 </label>
                                 <label class="genre-checkbox">
-                                    <input type="checkbox" name="generos[]" value="slice of life">
-                                    <span class="genre-label">Slice of Life</span>
+                                    <input type="checkbox" name="generos[]" value="shonen">
+                                    <span class="genre-label">Shōnen</span>
                                 </label>
                                 <label class="genre-checkbox">
                                     <input type="checkbox" name="generos[]" value="esportes">
@@ -896,6 +992,11 @@
             if (icon) {
                 icon.className = currentTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
             }
+            
+            // Debug: verificar se as funções estão carregadas
+            console.log('🔧 VERIFICANDO FUNÇÕES NO DOMContentLoaded:');
+            console.log('- toggleRequiredFields:', typeof window.toggleRequiredFields);
+            console.log('- testarBloqueio:', typeof window.testarBloqueio);
         });
     </script>
 </body>

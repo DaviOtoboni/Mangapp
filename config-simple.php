@@ -30,7 +30,7 @@ define('DEFAULT_THEME', 'light');
 
 // Configurações de status de manga
 define('MANGA_STATUSES', [
-    'lendo' => 'Lendo',
+    'assistindo' => 'Assistindo',
     'pretendo' => 'Pretendo Ler',
     'abandonado' => 'Abandonado',
     'completado' => 'Completado'

@@ -254,8 +254,8 @@ if (!empty($termo_pesquisa)) {
 // Função para converter status para texto completo
 function getStatusText($status) {
     $statusMap = [
-        'lendo' => 'Lendo',
-        'pretendo' => 'Pretendo Ler',
+        'assistindo' => 'Assistindo',
+        'pretendo' => 'Pretendo Assistir',
         'abandonado' => 'Abandonado',
         'completado' => 'Completado'
     ];
@@ -283,7 +283,7 @@ function formatGenres($generos) {
 
 // Calcular métricas
 $total_animes = count($_SESSION['animes']);
-$animes_lendo = count(array_filter($_SESSION['animes'], fn($m) => $m['status'] === 'lendo'));
+$animes_assistindo = count(array_filter($_SESSION['animes'], fn($m) => $m['status'] === 'assistindo'));
 $animes_pretendo = count(array_filter($_SESSION['animes'], fn($m) => $m['status'] === 'pretendo'));
 $animes_abandonados = count(array_filter($_SESSION['animes'], fn($m) => $m['status'] === 'abandonado'));
 $animes_finalizados = count(array_filter($_SESSION['animes'], fn($m) => $m['finalizado']));
