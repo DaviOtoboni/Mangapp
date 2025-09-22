@@ -64,3 +64,6 @@ docs/_build/
 .env.local
 .env.development
 .env.production
+
+#exemplos de paginas de email
+Example page email/
