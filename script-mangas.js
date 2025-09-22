@@ -15,6 +15,24 @@ function toggleTheme() {
     form.submit();
 }
 
+// Toggle do menu do usuário
+function toggleUserMenu() {
+    const dropdown = document.getElementById('userDropdown');
+    if (dropdown) {
+        dropdown.classList.toggle('show');
+    }
+}
+
+// Fechar menu do usuário ao clicar fora
+document.addEventListener('click', function(event) {
+    const userMenu = document.querySelector('.user-menu');
+    const dropdown = document.getElementById('userDropdown');
+    
+    if (userMenu && dropdown && !userMenu.contains(event.target)) {
+        dropdown.classList.remove('show');
+    }
+});
+
 // Switch view mode
 function switchView(viewMode) {
     console.log('=== DEBUG: switchView chamada ===');

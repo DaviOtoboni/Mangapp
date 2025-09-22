@@ -6,6 +6,7 @@ Uma aplicação web moderna e responsiva desenvolvida em PHP para gerenciar o co
 
 ### ✨ Funcionalidades Principais
 
+- **Sistema de Login**: Autenticação com nome de usuário/email e senha
 - **Busca Local**: Sistema de busca e gerenciamento local
 - **Suporte Multi-Tipo**: Mangás (japoneses), Manhwas (coreanos), Manhuas (chineses)
 - **Adicionar à Biblioteca**: Importação direta de APIs externas
@@ -40,7 +41,7 @@ Uma aplicação web moderna e responsiva desenvolvida em PHP para gerenciar o co
 
 - **Navbar Funcional**: Logo, links de navegação e controles
 - **Links de Navegação**: Animes e Jogos (preparados para futuras implementações)
-- **Ícone de Usuário**: Redirecionamento para página de perfil
+- **Menu do Usuário**: Dropdown com informações do usuário e opção de logout
 - **Sticky Navigation**: Barra de navegação fixa no topo
 
 ## 🛠️ Tecnologias Utilizadas
@@ -86,10 +87,23 @@ A aplicação é totalmente responsiva e funciona perfeitamente em:
 
 1. **Clone ou baixe** os arquivos para seu servidor web
 2. **Configure** as APIs no arquivo `config.php` (opcional)
-3. **Acesse** o arquivo `index-mangas.php` no navegador
-4. **Comece** a buscar e adicionar seus mangás!
+3. **Acesse** o arquivo `index.php` no navegador
+4. **Faça login** com as credenciais de demonstração
+5. **Comece** a buscar e adicionar seus mangás!
 
 > **Nota**: Este é um sistema local que funciona sem banco de dados, armazenando os dados na sessão do navegador.
+
+### 🔐 Credenciais de Demonstração
+
+- **Usuário**: admin | **Senha**: admin123
+- **Usuário**: usuario | **Senha**: senha123  
+- **Email**: teste@email.com | **Senha**: teste123
+
+### 📧 Emails Válidos para Recuperação de Senha
+
+- **teste@email.com**
+- **admin@mangapp.com**
+- **usuario@mangapp.com**
 
 ## ⚙️ Configuração
 
@@ -126,16 +140,25 @@ Mangapp/
 │   └── MangaDataProcessorSimple.php  # Processador de dados
 ├── covers/              # Imagens de capa dos mangás
 │   └── originals/       # Capas originais
-├── classes/             # Classes PHP do sistema
 ├── config.php           # Configuração principal
 ├── config-simple.php    # Configuração simplificada
 ├── debug-drag-drop.html # Página de teste de drag & drop
-├── index-mangas.php     # Arquivo principal
+├── index.php            # Página de entrada (redireciona para login/dashboard)
+├── login.php            # Página de login
+├── register.php         # Página de criação de conta
+├── forgot-password.php  # Página de recuperação de senha
+├── logout.php           # Página de logout
+├── dashboard.php        # Dashboard principal
+├── index-mangas.php     # Página de mangás
+├── index-animes.php     # Página de animes
+├── index-games.php      # Página de jogos
 ├── init-api.php         # Inicializador de APIs
 ├── script-mangas.js     # Scripts JavaScript
+├── script-login.js      # Scripts da página de login
 ├── search-results.php   # Página de resultados de busca
 ├── setup-test.php       # Página de teste do sistema
-├── styles-mangas.css    # Estilos CSS
+├── styles-mangas.css    # Estilos CSS principais
+├── styles-login.css     # Estilos da página de login
 ├── template-mangas.php  # Template HTML principal
 ├── test-sortable.html   # Página de teste de ordenação
 └── README.md            # Documentação
@@ -193,8 +216,8 @@ Cada mangá é armazenado com as seguintes informações:
 - [x] Interface responsiva
 - [x] Upload de capas
 - [x] Sistema de busca
+- [x] Autenticação de usuários
 - [ ] Sistema de banco de dados
-- [ ] Autenticação de usuários
 - [ ] Sistema de tags e categorias
 - [ ] API REST
 - [ ] Sistema de backup

@@ -2,6 +2,12 @@
 ob_start();
 session_start();
 
+// TEMPORÁRIO: Verificação de login desabilitada
+// if (!isset($_SESSION['user_logged_in']) || $_SESSION['user_logged_in'] !== true) {
+//     header('Location: login.php');
+//     exit;
+// }
+
 // Inicializar sistema local
 require_once 'init-api.php';
 

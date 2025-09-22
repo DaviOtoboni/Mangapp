@@ -37,9 +37,21 @@
                     <button class="theme-toggle" onclick="toggleTheme()">
                         <i class="fas fa-moon"></i>
                     </button>
-                    <a href="#" class="user-icon">
-                        <i class="fas fa-user"></i>
-                    </a>
+                    <div class="user-menu">
+                        <a href="#" class="user-icon" onclick="toggleUserMenu()">
+                            <i class="fas fa-user"></i>
+                        </a>
+                        <div class="user-dropdown" id="userDropdown">
+                            <div class="user-info">
+                                <i class="fas fa-user-circle"></i>
+                                <span><?php echo htmlspecialchars($_SESSION['username'] ?? 'Usuário'); ?></span>
+                            </div>
+                            <a href="logout.php" class="logout-btn">
+                                <i class="fas fa-sign-out-alt"></i>
+                                Sair
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
