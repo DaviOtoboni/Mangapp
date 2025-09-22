@@ -444,7 +444,33 @@
                         
                         <div class="form-group">
                             <label class="form-label">Status *</label>
-                            <select name="status" id="addStatus" class="form-select" required onchange="toggleRequiredFields()">
+                            <select name="status" id="addStatus" class="form-select" required onchange="
+                                console.log('🔄 STATUS JOGOS MUDOU PARA:', this.value);
+                                
+                                const horasJogadasField = document.getElementById('addCapituloAtual');
+                                const horasTotaisField = document.getElementById('addCapitulosTotal');
+                                
+                                if (this.value === 'completado') {
+                                    console.log('✅ BLOQUEANDO HORAS JOGADAS - Status é COMPLETADO');
+                                    
+                                    if (horasJogadasField) {
+                                        horasJogadasField.disabled = true;
+                                        horasJogadasField.readOnly = true;
+                                        horasJogadasField.value = horasTotaisField ? horasTotaisField.value || '0' : '0';
+                                        horasJogadasField.classList.add('field-blocked');
+                                        console.log('🔒 HORAS JOGADAS BLOQUEADAS - Valor:', horasJogadasField.value);
+                                    }
+                                } else {
+                                    console.log('❌ DESBLOQUEANDO HORAS JOGADAS - Status não é completado');
+                                    
+                                    if (horasJogadasField) {
+                                        horasJogadasField.disabled = false;
+                                        horasJogadasField.readOnly = false;
+                                        horasJogadasField.classList.remove('field-blocked');
+                                        console.log('🔓 HORAS JOGADAS DESBLOQUEADAS');
+                                    }
+                                }
+                            ">
                                 <option value="">Selecione...</option>
                                 <option value="jogando">Jogando</option>
                                 <option value="pretendo">Pretendo Jogar</option>
@@ -604,7 +630,33 @@
                         
                         <div class="form-group">
                             <label class="form-label">Status *</label>
-                            <select name="status" id="editStatus" class="form-select" required onchange="toggleEditRequiredFields()">
+                            <select name="status" id="editStatus" class="form-select" required onchange="
+                                console.log('🔄 STATUS JOGOS EDIT MUDOU PARA:', this.value);
+                                
+                                const horasJogadasField = document.getElementById('editCapituloAtual');
+                                const horasTotaisField = document.getElementById('editCapitulosTotal');
+                                
+                                if (this.value === 'completado') {
+                                    console.log('✅ BLOQUEANDO HORAS JOGADAS EDIT - Status é COMPLETADO');
+                                    
+                                    if (horasJogadasField) {
+                                        horasJogadasField.disabled = true;
+                                        horasJogadasField.readOnly = true;
+                                        horasJogadasField.value = horasTotaisField ? horasTotaisField.value || '0' : '0';
+                                        horasJogadasField.classList.add('field-blocked');
+                                        console.log('🔒 HORAS JOGADAS EDIT BLOQUEADAS - Valor:', horasJogadasField.value);
+                                    }
+                                } else {
+                                    console.log('❌ DESBLOQUEANDO HORAS JOGADAS EDIT - Status não é completado');
+                                    
+                                    if (horasJogadasField) {
+                                        horasJogadasField.disabled = false;
+                                        horasJogadasField.readOnly = false;
+                                        horasJogadasField.classList.remove('field-blocked');
+                                        console.log('🔓 HORAS JOGADAS EDIT DESBLOQUEADAS');
+                                    }
+                                }
+                            ">
                                 <option value="jogando">Jogando</option>
                                 <option value="pretendo">Pretendo Jogar</option>
                                 <option value="abandonado">Abandonado</option>
