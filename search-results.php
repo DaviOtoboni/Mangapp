@@ -1,6 +1,8 @@
 <?php 
 ob_start();
-session_start();
+
+// Verificação de autenticação obrigatória
+require_once 'auth-check.php';
 
 // Inicializar sistema local
 require_once 'init-api.php';

@@ -9,6 +9,16 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+// Incluir configurações do Supabase
+define('LOCAL_SYSTEM_INITIALIZED', true);
+require_once 'config-supabase.php';
+
+// Fazer logout no Supabase
+logoutWithSupabase();
+
+// Limpar token do Supabase da sessão
+unset($_SESSION['supabase_access_token']);
+
 // Destruir todas as variáveis de sessão
 $_SESSION = array();
 

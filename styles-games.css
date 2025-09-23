@@ -1964,3 +1964,50 @@ body {
     height: 0;
     pointer-events: none;
 }
+
+/* User Menu */
+.user-menu {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: var(--bg-secondary);
+    padding: 0.5rem 1rem;
+    border-radius: 2rem;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.user-name {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-primary);
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.user-name i {
+    color: var(--primary-color);
+    font-size: 0.8rem;
+}
+
+.logout-btn {
+    color: var(--danger-color);
+    font-size: 1rem;
+    padding: 0.5rem;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+}
+
+.logout-btn:hover {
+    background-color: var(--danger-color);
+    color: white;
+    transform: scale(1.1);
+    text-decoration: none;
+}

@@ -34,12 +34,18 @@
                         <a href="index-animes.php" class="nav-link">Animes</a>
                         <a href="index-games.php" class="nav-link active">Jogos</a>
                     </div>
+                    <div class="user-menu">
+                        <span class="user-name">
+                            <i class="fas fa-user"></i>
+                            <?php echo htmlspecialchars($_SESSION['username'] ?? 'Usuário'); ?>
+                        </span>
+                        <a href="logout.php" class="logout-btn" title="Sair">
+                            <i class="fas fa-sign-out-alt"></i>
+                        </a>
+                    </div>
                     <button class="theme-toggle" onclick="toggleTheme()">
                         <i class="fas fa-moon"></i>
                     </button>
-                    <a href="#" class="user-icon">
-                        <i class="fas fa-user"></i>
-                    </a>
                 </div>
             </div>
         </div>

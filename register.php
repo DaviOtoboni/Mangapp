@@ -9,8 +9,12 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+// Incluir configurações do Supabase
+define('LOCAL_SYSTEM_INITIALIZED', true);
+require_once 'config-supabase.php';
+
 // Verificar se já está logado
-if (isset($_SESSION['user_logged_in']) && $_SESSION['user_logged_in'] === true) {
+if (isUserLoggedInSupabase()) {
     header('Location: dashboard.php');
     exit;
 }
@@ -40,22 +44,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         $error_message = 'O nome de usuário deve ter pelo menos 3 caracteres.';
     } elseif (strlen($password) < 6) {
         $error_message = 'A senha deve ter pelo menos 6 caracteres.';
+    } elseif (!preg_match('/[a-z]/', $password)) {
+        $error_message = 'A senha deve conter pelo menos uma letra minúscula.';
+    } elseif (!preg_match('/[A-Z]/', $password)) {
+        $error_message = 'A senha deve conter pelo menos uma letra maiúscula.';
+    } elseif (!preg_match('/[0-9]/', $password)) {
+        $error_message = 'A senha deve conter pelo menos um número.';
     } elseif ($password !== $confirm_password) {
         $error_message = 'As senhas não coincidem.';
     } elseif (!$terms_accepted) {
         $error_message = 'Você deve aceitar os termos de uso.';
     } else {
-        // Simular verificação de usuário existente (em produção, verificar no banco de dados)
-        $existing_users = ['admin', 'usuario', 'teste'];
+        // Registrar usuário no Supabase
+        $register_result = registerWithSupabase($email, $password, $username);
         
-        if (in_array(strtolower($username), $existing_users)) {
-            $error_message = 'Este nome de usuário já está em uso.';
-        } else {
-            // Simular criação de conta (em produção, salvar no banco de dados)
-            $success_message = 'Conta criada com sucesso! Você pode fazer login agora.';
+        if ($register_result['success']) {
+            $success_message = $register_result['message'];
             
-            // Redirecionar para login após 2 segundos
-            header('refresh:2;url=login.php');
+            // Redirecionar para login após 5 segundos (mais tempo para ler a mensagem)
+            header('refresh:5;url=login.php');
+        } else {
+            $error_message = $register_result['message'];
+            
+            // Adicionar informações de debug se houver erro
+            if (isset($register_result['debug'])) {
+                $error_message .= '<br><small>Debug: ' . htmlspecialchars($register_result['debug']) . '</small>';
+            }
         }
     }
 }
@@ -167,10 +181,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                                        name="password" 
                                        class="form-input password-input" 
                                        placeholder="Digite sua senha"
+                                       oninput="validatePasswordStrength()"
                                        required>
                                 <button type="button" class="password-toggle" onclick="togglePassword('password')">
                                     <i class="fas fa-eye"></i>
                                 </button>
+                            </div>
+                            <div id="password-strength" class="password-strength" style="display: none;">
+                                <div class="strength-bar">
+                                    <div class="strength-fill"></div>
+                                </div>
+                                <div class="strength-text"></div>
+                                <div class="password-requirements">
+                                    <div class="requirement" data-requirement="length">
+                                        <i class="fas fa-times"></i> Pelo menos 6 caracteres
+                                    </div>
+                                    <div class="requirement" data-requirement="lowercase">
+                                        <i class="fas fa-times"></i> Uma letra minúscula
+                                    </div>
+                                    <div class="requirement" data-requirement="uppercase">
+                                        <i class="fas fa-times"></i> Uma letra maiúscula
+                                    </div>
+                                    <div class="requirement" data-requirement="number">
+                                        <i class="fas fa-times"></i> Um número
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -240,6 +275,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                 return false;
             }
             
+            if (!/[a-z]/.test(password)) {
+                showAlert('A senha deve conter pelo menos uma letra minúscula.', 'error');
+                return false;
+            }
+            
+            if (!/[A-Z]/.test(password)) {
+                showAlert('A senha deve conter pelo menos uma letra maiúscula.', 'error');
+                return false;
+            }
+            
+            if (!/[0-9]/.test(password)) {
+                showAlert('A senha deve conter pelo menos um número.', 'error');
+                return false;
+            }
+            
             if (password !== confirmPassword) {
                 showAlert('As senhas não coincidem.', 'error');
                 return false;
@@ -276,6 +326,70 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                 }
             }
         });
+        
+        // Função para validar força da senha
+        function validatePasswordStrength() {
+            const password = document.getElementById('password').value;
+            const strengthDiv = document.getElementById('password-strength');
+            
+            if (password.length === 0) {
+                strengthDiv.style.display = 'none';
+                return;
+            }
+            
+            strengthDiv.style.display = 'block';
+            
+            // Verificar requisitos
+            const requirements = {
+                length: password.length >= 6,
+                lowercase: /[a-z]/.test(password),
+                uppercase: /[A-Z]/.test(password),
+                number: /[0-9]/.test(password)
+            };
+            
+            // Atualizar indicadores visuais
+            Object.keys(requirements).forEach(req => {
+                const element = document.querySelector(`[data-requirement="${req}"]`);
+                const icon = element.querySelector('i');
+                
+                if (requirements[req]) {
+                    icon.className = 'fas fa-check';
+                    element.style.color = '#28a745';
+                } else {
+                    icon.className = 'fas fa-times';
+                    element.style.color = '#dc3545';
+                }
+            });
+            
+            // Calcular força da senha
+            const score = Object.values(requirements).filter(Boolean).length;
+            const strengthBar = document.querySelector('.strength-fill');
+            const strengthText = document.querySelector('.strength-text');
+            
+            strengthBar.style.width = (score * 25) + '%';
+            
+            if (score === 0) {
+                strengthBar.style.backgroundColor = '#dc3545';
+                strengthText.textContent = 'Muito fraca';
+                strengthText.style.color = '#dc3545';
+            } else if (score === 1) {
+                strengthBar.style.backgroundColor = '#fd7e14';
+                strengthText.textContent = 'Fraca';
+                strengthText.style.color = '#fd7e14';
+            } else if (score === 2) {
+                strengthBar.style.backgroundColor = '#ffc107';
+                strengthText.textContent = 'Média';
+                strengthText.style.color = '#ffc107';
+            } else if (score === 3) {
+                strengthBar.style.backgroundColor = '#17a2b8';
+                strengthText.textContent = 'Boa';
+                strengthText.style.color = '#17a2b8';
+            } else if (score === 4) {
+                strengthBar.style.backgroundColor = '#28a745';
+                strengthText.textContent = 'Muito forte';
+                strengthText.style.color = '#28a745';
+            }
+        }
     </script>
 </body>
 </html>

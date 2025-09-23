@@ -9,8 +9,12 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+// Incluir configurações do Supabase
+define('LOCAL_SYSTEM_INITIALIZED', true);
+require_once 'config-supabase.php';
+
 // Verificar se já está logado
-if (isset($_SESSION['user_logged_in']) && $_SESSION['user_logged_in'] === true) {
+if (isUserLoggedInSupabase()) {
     header('Location: dashboard.php');
     exit;
 }
@@ -36,38 +40,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     if (empty($username_or_email) || empty($password)) {
         $error_message = 'Por favor, preencha todos os campos.';
     } else {
-        // Sistema de autenticação simples (em produção, usar hash de senha e banco de dados)
-        $valid_users = [
-            'admin' => 'admin123',
-            'usuario' => 'senha123',
-            'teste@email.com' => 'teste123'
-        ];
-        
-        $login_successful = false;
-        
         // Verificar se é email ou nome de usuário
         if (filter_var($username_or_email, FILTER_VALIDATE_EMAIL)) {
-            // É um email
-            if (isset($valid_users[$username_or_email]) && $valid_users[$username_or_email] === $password) {
-                $login_successful = true;
-            }
+            // É um email - fazer login diretamente
+            $login_result = loginWithSupabase($username_or_email, $password);
         } else {
-            // É um nome de usuário
-            if (isset($valid_users[$username_or_email]) && $valid_users[$username_or_email] === $password) {
-                $login_successful = true;
-            }
+            // É um nome de usuário - precisamos buscar o email primeiro
+            // Por enquanto, vamos assumir que o usuário digitou o email
+            $login_result = loginWithSupabase($username_or_email, $password);
         }
         
-        if ($login_successful) {
+        if ($login_result['success']) {
+            // Salvar dados do usuário na sessão
             $_SESSION['user_logged_in'] = true;
-            $_SESSION['username'] = $username_or_email;
+            $_SESSION['user_id'] = $login_result['user']['id'];
+            $_SESSION['user_email'] = $login_result['user']['email'];
+            $_SESSION['username'] = $login_result['user']['user_metadata']['username'] ?? $login_result['user']['email'];
             $_SESSION['login_time'] = time();
             
-            // Redirecionar para o dashboard
-            header('Location: dashboard.php');
+            // Salvar token de acesso para autenticação
+            if (isset($login_result['session']['access_token'])) {
+                $_SESSION['supabase_access_token'] = $login_result['session']['access_token'];
+            }
+            
+            // Salvar dados do usuário na tabela personalizada
+            saveUserToDatabase($login_result['user']);
+            
+            // Redirecionar para a página original ou dashboard
+            $redirect = $_GET['redirect'] ?? 'dashboard.php';
+            header('Location: ' . $redirect);
             exit;
         } else {
-            $error_message = 'Credenciais inválidas. Verifique seu nome de usuário/email e senha.';
+            $error_message = $login_result['message'];
+            
+            // Se for erro de email não confirmado, adicionar botão para reenviar
+            if (isset($login_result['error_code']) && $login_result['error_code'] === 'email_not_confirmed') {
+                $error_message .= '<br><br><a href="resend-confirmation.php?email=' . urlencode($username_or_email) . '" class="btn-resend-confirmation">Reenviar email de confirmação</a>';
+            }
+            
+            // Adicionar informações de debug se houver erro
+            if (isset($login_result['debug'])) {
+                $error_message .= '<br><small>Debug: ' . htmlspecialchars($login_result['debug']) . '</small>';
+            }
         }
     }
 }
